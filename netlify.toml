@@ -3,6 +3,7 @@
   command = "npm run build"
 [build.environment]
   FORM_MODE = "netlify"
+  SITE_URL = "https://handyhab.com"
 [build.processing.html]
   pretty_urls = false
 [[headers]]
