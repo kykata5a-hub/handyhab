@@ -1,0 +1,362 @@
+---
+import { Icon } from 'astro-icon/components';
+
+import { business, telHref, whatsappHref } from '~/config/business';
+import { localePath, t, type Lang } from '~/i18n';
+import { HONEYPOT, SERVICES, TIME_WINDOWS, MAX_FILES, ALLOWED_TYPES } from '~/lib/booking';
+
+export interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const f = d.form;
+
+// Submit mode is chosen at build time with the FORM_MODE env variable.
+const mode = (import.meta.env.FORM_MODE || 'api') as 'api' | 'netlify' | 'php';
+const home = localePath(lang);
+const action = { api: '/api/booking', php: '/booking.php', netlify: `${home}#booking-sent` }[mode];
+const netlifyAttrs =
+  mode === 'netlify' ? { 'data-netlify': 'true', 'netlify-honeypot': HONEYPOT, name: 'booking' } : {};
+---
+
+<div class="form-panel relative rounded-sm border p-5 sm:p-8 lg:p-10">
+  <div id="booking-sent" class="booking-static mb-6 hidden border-l-4 border-[var(--f-ok)] bg-[var(--f-tint)] p-4">
+    <p class="font-semibold">{f.successTitle}</p>
+    <p class="text-[var(--f-muted)]">{f.successText}</p>
+  </div>
+  <div id="booking-error" class="booking-static mb-6 hidden border-l-4 border-[var(--f-error)] bg-[var(--f-tint)] p-4">
+    <p class="font-semibold">{f.errorTitle}</p>
+    <p class="text-[var(--f-muted)]">{f.errorText}</p>
+  </div>
+
+  <form
+    method="POST"
+    action={action}
+    enctype="multipart/form-data"
+    novalidate
+    data-booking
+    data-mode={mode}
+    data-messages={JSON.stringify({ ...f.errors, rateLimited: f.rateLimited, sending: f.sending })}
+    {...netlifyAttrs}
+  >
+    {mode === 'netlify' && <input type="hidden" name="form-name" value="booking" />}
+    <input type="hidden" name="lang" value={lang} />
+
+    <!-- Honeypot: hidden from people and screen readers, bots fill it. -->
+    <div class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+      <label>{f.honeypot}<input type="text" name={HONEYPOT} tabindex="-1" autocomplete="off" /></label>
+    </div>
+
+    <p class="field-error mb-4 font-semibold" data-summary role="alert"></p>
+
+    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      <div class="field">
+        <label class="label" for="bf-name">{f.name}</label>
+        <input
+          class="input"
+          id="bf-name"
+          name="name"
+          type="text"
+          autocomplete="name"
+          required
+          minlength="2"
+          aria-describedby="bf-name-err"
+        />
+        <p class="field-error" id="bf-name-err"></p>
+      </div>
+
+      <div class="field">
+        <label class="label" for="bf-phone">{f.phone}</label>
+        <input
+          class="input"
+          id="bf-phone"
+          name="phone"
+          type="tel"
+          autocomplete="tel"
+          inputmode="tel"
+          required
+          aria-describedby="bf-phone-err"
+        />
+        <p class="field-error" id="bf-phone-err"></p>
+      </div>
+
+      <div class="field">
+        <label class="label" for="bf-email">{f.email} <small>({f.optional})</small></label>
+        <input
+          class="input"
+          id="bf-email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          aria-describedby="bf-email-err"
+        />
+        <p class="field-error" id="bf-email-err"></p>
+      </div>
+
+      <div class="field">
+        <label class="label" for="bf-zip">{f.zip}</label>
+        <input
+          class="input"
+          id="bf-zip"
+          name="zip"
+          type="text"
+          inputmode="numeric"
+          autocomplete="postal-code"
+          maxlength="5"
+          pattern="[0-9]{5}"
+          required
+          aria-describedby="bf-zip-err"
+        />
+        <p class="field-error" id="bf-zip-err"></p>
+      </div>
+
+      <div class="field md:col-span-2">
+        <label class="label" for="bf-service">{f.service}</label>
+        <select class="input" id="bf-service" name="service" required aria-describedby="bf-service-err">
+          <option value="">{f.servicePlaceholder}</option>
+          {SERVICES.map((s) => <option value={s}>{f.serviceOptions[s]}</option>)}
+        </select>
+        <p class="field-error" id="bf-service-err"></p>
+      </div>
+
+      <div class="field">
+        <label class="label" for="bf-date">{f.date} <small>({f.optional})</small></label>
+        <input class="input" id="bf-date" name="date" type="date" aria-describedby="bf-date-err" />
+        <p class="field-error" id="bf-date-err"></p>
+      </div>
+
+      <fieldset class="field">
+        <legend class="label mb-1.5">{f.time} <small>({f.optional})</small></legend>
+        <div class="grid grid-cols-3 gap-2">
+          {
+            TIME_WINDOWS.map((w) => (
+              <label class="time-opt">
+                <input type="radio" name="time" value={w} class="peer sr-only" />
+                <span class="peer-checked:bg-orange peer-checked:text-on-orange peer-checked:border-orange peer-focus-visible:outline-orange flex min-h-[3.25rem] cursor-pointer items-center justify-center rounded-sm border-2 border-[var(--f-line)] px-1 text-center text-sm leading-tight peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2">
+                  <span>
+                    {f.timeOptions[w].split(' (')[0]}
+                    <span class="block text-xs opacity-80">{f.timeOptions[w].split(' (')[1]?.replace(')', '')}</span>
+                  </span>
+                </span>
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <div class="field md:col-span-2 lg:col-span-4">
+        <label class="label" for="bf-description">{f.description} <small>({f.optional})</small></label>
+        <textarea
+          class="input min-h-32"
+          id="bf-description"
+          name="description"
+          rows="4"
+          maxlength="2000"
+          aria-describedby="bf-description-hint"></textarea>
+        <p class="text-[var(--f-muted)] text-sm" id="bf-description-hint">{f.descriptionHint}</p>
+      </div>
+
+      <div class="field md:col-span-2 lg:col-span-4">
+        <span class="label" id="bf-photos-label">{f.photos} <small>({f.optional})</small></span>
+        <label
+          class="hover:border-orange flex min-h-[3.25rem] cursor-pointer items-center gap-3 rounded-sm border-2 border-dashed border-[var(--f-line)] px-4 py-3 focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-[var(--c-orange)]"
+        >
+          <Icon name="tabler:upload" class="text-orange h-6 w-6 shrink-0" aria-hidden="true" />
+          <span class="font-semibold">{f.photosChoose}</span>
+          <input
+            type="file"
+            name="photos"
+            multiple
+            accept={ALLOWED_TYPES.join(',')}
+            data-max={MAX_FILES}
+            class="sr-only"
+            aria-labelledby="bf-photos-label"
+            aria-describedby="bf-photos-hint bf-photos-err"
+          />
+        </label>
+        <ul class="text-[var(--f-muted)] grid gap-1 text-sm" data-file-list></ul>
+        <p class="text-[var(--f-muted)] text-sm" id="bf-photos-hint">{f.photosHint}</p>
+        <p class="field-error" id="bf-photos-err"></p>
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+      <button type="submit" class="btn btn-orange w-full sm:w-auto sm:px-10" data-submit>
+        <span data-submit-label>{f.submit}</span>
+      </button>
+      <p class="text-[var(--f-muted)] text-sm">
+        {f.privacy}{' '}<a
+          href={localePath(lang, 'privacy')}
+          class="hover:text-[var(--f-ink)] underline underline-offset-4">{f.privacyLink}</a
+        >.
+      </p>
+    </div>
+  </form>
+
+  <div data-result="success" hidden class="py-6" tabindex="-1">
+    <Icon name="tabler:circle-check" class="h-12 w-12 text-[var(--f-ok)]" aria-hidden="true" />
+    <h3 class="mt-4 text-4xl">{f.successTitle}</h3>
+    <p class="text-[var(--f-muted)] mt-3 max-w-prose">{f.successText}</p>
+    <a href={telHref} class="btn btn-ghost mt-6">
+      <Icon name="tabler:phone" class="h-5 w-5" aria-hidden="true" />
+      {business.phone.display}
+    </a>
+  </div>
+
+  <div
+    data-result="error"
+    hidden
+    class="mt-6 border-l-4 border-[var(--f-error)] bg-[var(--f-tint)] p-4"
+    tabindex="-1"
+    role="alert"
+  >
+    <p class="flex items-center gap-2 font-semibold">
+      <Icon name="tabler:alert-triangle" class="h-5 w-5 text-[var(--f-error)]" aria-hidden="true" />
+      <span data-error-title>{f.errorTitle}</span>
+    </p>
+    <p class="text-[var(--f-muted)] mt-1" data-error-text data-default={f.errorText}>{f.errorText}</p>
+    <div class="mt-3 flex flex-wrap gap-3">
+      <a href={telHref} class="btn btn-orange min-h-11 text-base">
+        <Icon name="tabler:phone" class="h-5 w-5" aria-hidden="true" />
+        {business.phone.display}
+      </a>
+      <a
+        href={whatsappHref(d.whatsapp.message)}
+        target="_blank"
+        rel="noopener"
+        class="btn btn-ghost min-h-11 text-base"
+      >
+        <Icon name="tabler:brand-whatsapp" class="h-5 w-5" aria-hidden="true" />
+        {d.hero.ctaWhatsapp}
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .booking-static:target {
+    display: block;
+  }
+</style>
+
+<script>
+  import { validateField, validateFiles, todayLA, type BookingData, type ErrorCode } from '~/lib/booking';
+
+  const form = document.querySelector<HTMLFormElement>('form[data-booking]');
+  if (form) {
+    const root = form.parentElement!;
+    const messages = JSON.parse(form.dataset.messages || '{}') as Record<string, string>;
+    const mode = form.dataset.mode;
+    const summary = form.querySelector<HTMLElement>('[data-summary]')!;
+    const fileInput = form.querySelector<HTMLInputElement>('input[type="file"]')!;
+    const fileList = form.querySelector<HTMLUListElement>('[data-file-list]')!;
+    const submitBtn = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const submitLabel = form.querySelector<HTMLElement>('[data-submit-label]')!;
+    const success = root.querySelector<HTMLElement>('[data-result="success"]')!;
+    const failure = root.querySelector<HTMLElement>('[data-result="error"]')!;
+    const failureText = failure.querySelector<HTMLElement>('[data-error-text]')!;
+
+    const dateInput = form.querySelector<HTMLInputElement>('input[name="date"]');
+    if (dateInput) dateInput.min = todayLA();
+
+    const textFields = ['name', 'phone', 'email', 'zip', 'service', 'date'] as const;
+
+    const showError = (name: string, code?: ErrorCode) => {
+      const el = form.querySelector<HTMLElement>(`#bf-${name}-err`);
+      const input = name === 'photos' ? fileInput : form.querySelector<HTMLElement>(`[name="${name}"]`);
+      if (el) el.textContent = code ? messages[code] || '' : '';
+      input?.setAttribute('aria-invalid', code ? 'true' : 'false');
+      return !code;
+    };
+
+    const value = (name: string) =>
+      (form.elements.namedItem(name) as HTMLInputElement | RadioNodeList | null)?.value ?? '';
+
+    // Validate a field once the person leaves it, then live while they fix it.
+    textFields.forEach((name) => {
+      const input = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
+      if (!input) return;
+      input.addEventListener('blur', () => input.value && showError(name, validateField(name, input.value)));
+      input.addEventListener('input', () => {
+        if (input.getAttribute('aria-invalid') === 'true') showError(name, validateField(name, input.value));
+      });
+    });
+
+    fileInput.addEventListener('change', () => {
+      const files = [...(fileInput.files || [])];
+      fileList.replaceChildren(
+        ...files.map((file) => {
+          const li = document.createElement('li');
+          li.textContent = `${file.name} · ${(file.size / 1024 / 1024).toFixed(1)} MB`;
+          return li;
+        })
+      );
+      showError('photos', validateFiles(files));
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      failure.hidden = true;
+
+      let ok = true;
+      for (const name of textFields) ok = showError(name, validateField(name as keyof BookingData, value(name))) && ok;
+      ok = showError('photos', validateFiles([...(fileInput.files || [])])) && ok;
+
+      if (!ok) {
+        summary.textContent = messages.summary;
+        form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+        return;
+      }
+      summary.textContent = '';
+
+      submitBtn.disabled = true;
+      const label = submitLabel.textContent;
+      submitLabel.textContent = messages.sending;
+
+      const body = new FormData(form);
+      if (mode === 'php') {
+        // PHP only keeps several files when the field is named photos[].
+        const photos = body.getAll('photos');
+        body.delete('photos');
+        photos.forEach((p) => body.append('photos[]', p));
+      }
+
+      try {
+        const res = await fetch(mode === 'netlify' ? '/' : form.action, {
+          method: 'POST',
+          body,
+          headers: { Accept: 'application/json' },
+        });
+        if (res.ok) {
+          form.hidden = true;
+          success.hidden = false;
+          success.focus();
+          return;
+        }
+        let payload: { errors?: Record<string, ErrorCode> } = {};
+        try {
+          payload = await res.json();
+        } catch {
+          /* non-JSON error page */
+        }
+        if (res.status === 422 && payload.errors) {
+          Object.entries(payload.errors).forEach(([k, v]) => showError(k, v));
+          summary.textContent = messages.summary;
+          form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+          return;
+        }
+        failureText.textContent = res.status === 429 ? messages.rateLimited : failureText.dataset.default || '';
+        failure.hidden = false;
+        failure.focus();
+      } catch {
+        failureText.textContent = failureText.dataset.default || '';
+        failure.hidden = false;
+        failure.focus();
+      } finally {
+        submitBtn.disabled = false;
+        submitLabel.textContent = label;
+      }
+    });
+  }
+</script>

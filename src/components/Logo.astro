@@ -1,9 +1,16 @@
 ---
-import { SITE } from 'astrowind:config';
+// Placeholder text wordmark until the client sends a real logo.
+import { business } from '~/config/business';
+
+export interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
 ---
 
-<span
-  class="self-center ml-2 rtl:ml-0 rtl:mr-2 text-2xl md:text-xl font-bold text-gray-900 whitespace-nowrap dark:text-white"
->
-  🚀 {SITE?.name}
+<span class:list={['font-display inline-flex items-stretch leading-none font-bold uppercase', className]}>
+  <span class="py-1 pr-2 text-[1.35rem] tracking-[0.02em]">{business.wordmark.main}</span>
+  <span class="bg-orange text-on-orange -skew-x-12 px-2 py-1 text-[1.35rem]">
+    <span class="inline-block skew-x-12">{business.wordmark.accent}</span>
+  </span>
 </span>

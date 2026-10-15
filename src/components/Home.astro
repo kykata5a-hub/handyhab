@@ -1,0 +1,568 @@
+---
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import BeforeAfter from '~/components/BeforeAfter.astro';
+import BookingForm from '~/components/BookingForm.astro';
+import { business, telHref, whatsappHref } from '~/config/business';
+import heroImage from '~/assets/hero.jpg';
+import { localePath, htmlLang, t, type Lang } from '~/i18n';
+
+export interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+
+const serviceIcons = [
+  'tabler:sofa',
+  'tabler:building-warehouse',
+  'tabler:home-2',
+  'tabler:shovel',
+  'tabler:packages',
+  'tabler:building-skyscraper',
+];
+const trustIcons = ['tabler:truck-delivery', 'tabler:receipt', 'tabler:barbell'];
+
+const site = Astro.site ?? new URL('https://example.com');
+const url = new URL(localePath(lang), site).href;
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HomeAndConstructionBusiness',
+    '@id': `${new URL('/', site).href}#business`,
+    name: business.name,
+    description: d.meta.description,
+    url,
+    image: new URL('/og-image.jpg', site).href,
+    telephone: business.phone.e164,
+    email: business.email,
+    priceRange: '$$',
+    inLanguage: htmlLang[lang],
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: business.address.locality,
+      addressRegion: business.address.region,
+      addressCountry: business.address.country,
+    },
+    geo: { '@type': 'GeoCoordinates', ...business.geo },
+    areaServed: business.serviceArea.map((name) => ({ '@type': 'Place', name: `${name}, CA` })),
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: business.hours.opens,
+      closes: business.hours.closes,
+    },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: d.services.title,
+      itemListElement: d.services.items.map((s) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: s.title, description: s.text },
+      })),
+    },
+    sameAs: Object.values(business.social).filter(Boolean),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: htmlLang[lang],
+    mainEntity: d.faq.items.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
+---
+
+<BaseLayout lang={lang} title={d.meta.title} description={d.meta.description}>
+  <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <!-- Hero -->
+  <section class="hero bg-slab text-on-slab relative overflow-hidden">
+    <Image
+      src={heroImage}
+      alt={d.hero.imageAlt}
+      widths={[640, 960, 1584]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="hero-img"
+    />
+    <div class="hero-shade" aria-hidden="true"></div>
+    <div class="wrap hero-content relative">
+      <div class="hero-main">
+        <div>
+          <h1 class="hero-title">{d.hero.title}</h1>
+          <a href="#book" class="btn btn-orange hero-cta mt-5 px-8 text-xl">{d.hero.ctaEstimate}</a>
+        </div>
+        <div>
+          <p class="hero-sub font-display">{d.hero.lead}</p>
+          <div class="mt-5 flex flex-wrap items-stretch gap-3">
+            <a href={telHref} class="btn btn-orange hero-cta">
+              <Icon name="tabler:phone" class="h-5 w-5" aria-hidden="true" />
+              {d.hero.callCta}
+            </a>
+            <a
+              href={telHref}
+              class="btn font-display text-orange hover:text-on-slab hero-phone border-white/15 bg-[#0E0E0F]/85 text-2xl tracking-wide"
+            >
+              {business.phone.display}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile only: the selling points sit on the photo (the orange bar below is md+). -->
+      <ul class="hero-trust">
+        {
+          d.trust.map((item, i) => (
+            <li class="hero-trust-item">
+              <Icon name={trustIcons[i]} class="text-orange mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+              <div class="min-w-0">
+                <p class="font-display text-[0.86rem] leading-tight uppercase">{item.title}</p>
+                <p class="mt-0.5 text-[0.7rem] leading-snug text-[#d9d4cd]">{item.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Trust bar -->
+  <section class="trust-bar text-on-orange hidden md:block" aria-label={d.trust.map((x) => x.title).join(', ')}>
+    <ul class="wrap grid gap-5 py-6 md:grid-cols-3 md:gap-0 md:divide-x md:divide-[rgb(14_14_15/0.22)] md:py-7">
+      {
+        d.trust.map((item, i) => (
+          <li class="flex gap-4 md:px-8 md:first:pl-0 md:last:pr-0">
+            <Icon name={trustIcons[i]} class="mt-0.5 h-9 w-9 shrink-0" aria-hidden="true" />
+            <div>
+              <p class="font-display text-2xl leading-tight font-bold uppercase">{item.title}</p>
+              <p class="mt-1 text-[0.98rem] leading-snug">{item.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="section services relative overflow-hidden">
+    <div class="services-blob services-blob--a" aria-hidden="true"></div>
+    <div class="services-blob services-blob--b" aria-hidden="true"></div>
+    <div class="wrap relative">
+      <h2 class="h2">{d.services.title}</h2>
+      <p class="text-muted mt-4 max-w-2xl text-lg">{d.services.intro}</p>
+      <ul class="mt-7 grid gap-4 sm:grid-cols-2 lg:mt-9 lg:grid-cols-3 lg:gap-5" data-glass-grid>
+        {
+          d.services.items.map((s, i) => (
+            <li class="glass-tile p-5 sm:p-6" data-glass>
+              <div class="flex items-center gap-4">
+                <span class="bg-orange text-on-orange grid h-12 w-12 shrink-0 place-items-center rounded-lg">
+                  <Icon name={serviceIcons[i]} class="h-7 w-7" aria-hidden="true" />
+                </span>
+                <h3 class="text-[1.35rem] leading-[1.05] sm:text-[1.6rem]">{s.title}</h3>
+              </div>
+              <p class="text-muted mt-3">{s.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Before / After -->
+  <section id="results" class="section bg-bg-alt">
+    <div class="wrap">
+      <h2 class="h2">{d.gallery.title}</h2>
+      <p class="text-muted mt-4 max-w-2xl text-lg">{d.gallery.intro}</p>
+      <div class="mt-7 lg:mt-9">
+        <BeforeAfter lang={lang} />
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="process" class="section">
+    <div class="wrap">
+      <h2 class="h2">{d.steps.title}</h2>
+      <ol class="mt-7 grid gap-7 md:grid-cols-3 md:gap-8 lg:mt-9">
+        {
+          d.steps.items.map((s, i) => (
+            <li class="border-orange border-t-4 pt-5">
+              <div class="flex items-end gap-4">
+                <span class="step-num font-display block" aria-hidden="true">
+                  {i + 1}
+                </span>
+                <h3 class="text-4xl">{s.title}</h3>
+              </div>
+              <p class="text-muted mt-3 max-w-sm">{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Service area -->
+  <section id="areas" class="section bg-bg-alt">
+    <div class="wrap">
+      <div class="flex items-center justify-between gap-6">
+        <h2 class="h2">{d.areas.title}</h2>
+        <a href="#book" class="btn btn-orange hidden md:inline-flex">{d.areas.cta}</a>
+      </div>
+      <p class="text-muted mt-4 max-w-2xl text-lg lg:max-w-none xl:whitespace-nowrap">{d.areas.intro}</p>
+      <ul class="mt-7 columns-2 gap-8 sm:columns-3 lg:mt-8 lg:columns-4">
+        {
+          business.serviceArea.map((area) => (
+            <li class="border-line flex break-inside-avoid items-center gap-2.5 border-b py-2.5 font-semibold">
+              <Icon name="tabler:map-pin" class="text-orange-text h-4 w-4 shrink-0" aria-hidden="true" />
+              {area}
+            </li>
+          ))
+        }
+      </ul>
+      <a href="#book" class="btn btn-orange mt-7 md:hidden">{d.areas.cta}</a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="section">
+    <div class="wrap">
+      <h2 class="h2">{d.faq.title}</h2>
+      <div class="border-line mt-6 border-t">
+        {
+          d.faq.items.map((item) => (
+            <details class="faq border-line group border-b">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-3.5 font-semibold sm:text-lg">
+                <span>{item.q}</span>
+                <span class="faq-icon text-orange-text relative h-4 w-4 shrink-0" aria-hidden="true" />
+              </summary>
+              <p class="text-muted max-w-3xl pb-5">{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking -->
+  <section id="book" class="section bg-bg-alt">
+    <div class="wrap">
+      <h2 class="h2">{d.form.title}</h2>
+      <p class="text-muted mt-4 max-w-2xl text-lg">{d.form.intro}</p>
+      <div class="mt-6 flex flex-wrap items-center gap-x-8 gap-y-3">
+        <a href={telHref} class="font-display text-orange-text text-4xl whitespace-nowrap hover:underline">
+          {business.phone.display}
+        </a>
+        <a
+          href={whatsappHref(d.whatsapp.message)}
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-2 py-2 font-semibold hover:underline"
+        >
+          <Icon name="tabler:brand-whatsapp" class="h-6 w-6 text-[#1a9e4b] dark:text-[#25D366]" aria-hidden="true" />
+          {d.hero.ctaWhatsapp}
+        </a>
+        <p class="text-muted flex items-center gap-2">
+          <Icon name="tabler:clock" class="text-orange-text h-5 w-5" aria-hidden="true" />
+          {d.footer.hoursText}
+        </p>
+      </div>
+      <div class="mt-7">
+        <BookingForm lang={lang} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Mobile: photo fills the hero; text on the left, selling points on the right.
+     md+: text over the photo, like the brand mockup, selling points in the orange bar. */
+  .hero-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 70% 50%;
+  }
+  .hero-shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgb(14 14 15 / 0.85) 0%, rgb(14 14 15 / 0.55) 55%, rgb(14 14 15 / 0.7) 100%),
+      linear-gradient(to bottom, rgb(14 14 15 / 0) 60%, rgb(14 14 15 / 0.6) 100%);
+  }
+  .hero-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 0.85rem;
+    padding-block: 1.75rem 1.75rem;
+  }
+  .hero-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .hero-title {
+    font-size: clamp(1.9rem, 8.4vw, 4.6rem);
+    font-weight: 500;
+    line-height: 0.98;
+    max-width: 11ch;
+    overflow-wrap: anywhere;
+    text-shadow: 0 2px 18px rgb(0 0 0 / 0.45);
+  }
+  :global(html[lang='ru']) .hero-title {
+    font-size: clamp(1.6rem, 7vw, 4.6rem);
+  }
+  .hero-sub {
+    font-size: clamp(1rem, 4vw, 1.9rem);
+    line-height: 1.12;
+    text-transform: uppercase;
+    max-width: 26ch;
+    text-shadow: 0 2px 14px rgb(0 0 0 / 0.5);
+  }
+  .hero-trust {
+    /* Cards stacked together at the bottom, level with the phone button. */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.4rem;
+  }
+  @media (width >= 48rem) {
+    .hero-trust {
+      display: none; /* the orange bar shows these on larger screens */
+    }
+  }
+  .hero-trust-item {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.55rem 0.6rem;
+    border-radius: 0.6rem;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    border-left: 3px solid var(--c-orange);
+    background: rgb(14 14 15 / 0.55);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  @media (width < 48rem) {
+    /* Narrow left column: smaller, wrapping buttons that fill it. */
+    .hero-content :is(.hero-cta, .hero-phone) {
+      width: 100%;
+      min-height: 2.9rem;
+      padding: 0.6rem 0.7rem;
+      font-size: 0.95rem;
+      white-space: normal;
+      text-align: center;
+    }
+    .hero-content .hero-phone {
+      font-size: 1.2rem;
+    }
+    .hero-content .hero-cta {
+      margin-top: 1rem;
+    }
+    .hero-content .hero-main > div:last-child > div {
+      margin-top: 0.75rem;
+      gap: 0.5rem;
+    }
+  }
+  @media (width >= 48rem) {
+    .hero-img {
+      object-position: 62% 50%;
+    }
+    .hero-shade {
+      background: linear-gradient(90deg, rgb(14 14 15 / 0.82) 0%, rgb(14 14 15 / 0.55) 32%, rgb(14 14 15 / 0) 58%);
+    }
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      min-height: clamp(29rem, 37vw, 39rem);
+      padding-block: clamp(2.25rem, 4.5vw, 4rem) clamp(2rem, 3vw, 3rem);
+    }
+    .hero-main {
+      flex: 1;
+      gap: 2rem;
+    }
+  }
+  .step-num {
+    font-size: 3.25rem;
+    line-height: 0.9;
+    font-weight: 700;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--c-orange-text);
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-icon::before,
+  .faq-icon::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 3px;
+    margin-top: -1.5px;
+    background: currentColor;
+    transition: transform 0.2s;
+  }
+  .faq-icon::after {
+    transform: rotate(90deg);
+  }
+  .faq[open] .faq-icon::after {
+    transform: rotate(0deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .faq-icon::after {
+      transition: none;
+    }
+  }
+  /* --- What we haul: liquid-glass tiles over drifting orange light ---------- */
+  .services-blob {
+    position: absolute;
+    width: 42rem;
+    height: 42rem;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.38;
+    pointer-events: none;
+  }
+  .services-blob--a {
+    top: 6rem;
+    left: -12rem;
+    background: radial-gradient(circle, var(--c-orange) 0%, transparent 65%);
+  }
+  .services-blob--b {
+    right: -14rem;
+    bottom: -10rem;
+    background: radial-gradient(circle, #ffb366 0%, var(--c-orange) 30%, transparent 68%);
+    opacity: 0.3;
+  }
+  :global(.dark) .services-blob {
+    opacity: 0.32;
+  }
+  .glass-tile {
+    --rx: 0deg;
+    --ry: 0deg;
+    --mx: 50%;
+    --my: 0%;
+    --glare: 0;
+    position: relative;
+    border-radius: 1rem;
+    background: linear-gradient(145deg, rgb(255 255 255 / 0.62), rgb(255 255 255 / 0.38));
+    border: 1px solid rgb(255 255 255 / 0.7);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.8),
+      0 8px 28px rgb(60 30 0 / 0.08);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(160%);
+    overflow: hidden;
+  }
+  :global(.dark) .glass-tile {
+    background: linear-gradient(145deg, rgb(40 40 44 / 0.62), rgb(26 26 28 / 0.42));
+    border-color: rgb(255 255 255 / 0.12);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      0 10px 30px rgb(0 0 0 / 0.35);
+  }
+  /* Moving highlight that follows the pointer (desktop only, set from script). */
+  .glass-tile::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(22rem circle at var(--mx) var(--my), rgb(255 255 255 / 0.55), transparent 45%);
+    opacity: var(--glare);
+    transition: opacity 0.3s;
+    pointer-events: none;
+    mix-blend-mode: soft-light;
+  }
+  .glass-tile > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .services-blob--a {
+      animation: blob-drift-a 18s ease-in-out infinite alternate;
+    }
+    .services-blob--b {
+      animation: blob-drift-b 22s ease-in-out infinite alternate;
+    }
+    .glass-tile {
+      transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+      transition:
+        transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+        box-shadow 0.3s;
+      will-change: transform;
+    }
+    .glass-tile.is-active {
+      transition:
+        transform 0.08s linear,
+        box-shadow 0.3s;
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.8),
+        0 18px 40px rgb(60 30 0 / 0.16);
+    }
+  }
+  @keyframes blob-drift-a {
+    to {
+      transform: translate(18rem, 8rem) scale(1.15);
+    }
+  }
+  @keyframes blob-drift-b {
+    to {
+      transform: translate(-20rem, -12rem) scale(0.9);
+    }
+  }
+  /* Orange bar fades into the page colour (light: off-white, dark: black) at the sides,
+     but only outside the content column, so the text always sits on solid orange. */
+  .trust-bar {
+    /* Fade width: the side margin plus ~40 % more, so it reaches just into the
+       content column (orange stays ≥ ~80 % under the first/last item: text readable). */
+    --fade: calc(max(0px, 50% - 38rem) * 1.4);
+    background: linear-gradient(
+      90deg,
+      var(--c-bg) 0,
+      color-mix(in srgb, var(--c-bg) 45%, var(--c-orange)) calc(var(--fade) * 0.45),
+      var(--c-orange) var(--fade),
+      var(--c-orange) calc(100% - var(--fade)),
+      color-mix(in srgb, var(--c-bg) 45%, var(--c-orange)) calc(100% - var(--fade) * 0.45),
+      var(--c-bg) 100%
+    );
+  }
+</style>
+
+<script>
+  // Tilt + glare on the service tiles, only for a real mouse and when motion is OK.
+  const canTilt = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
+  if (canTilt.matches) {
+    document.querySelectorAll<HTMLElement>('[data-glass]').forEach((tile) => {
+      let frame = 0;
+      tile.addEventListener('pointermove', (e) => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => {
+          const r = tile.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width;
+          const y = (e.clientY - r.top) / r.height;
+          tile.classList.add('is-active');
+          tile.style.setProperty('--ry', `${((x - 0.5) * 10).toFixed(2)}deg`);
+          tile.style.setProperty('--rx', `${((0.5 - y) * 8).toFixed(2)}deg`);
+          tile.style.setProperty('--mx', `${(x * 100).toFixed(1)}%`);
+          tile.style.setProperty('--my', `${(y * 100).toFixed(1)}%`);
+          tile.style.setProperty('--glare', '1');
+        });
+      });
+      tile.addEventListener('pointerleave', () => {
+        cancelAnimationFrame(frame);
+        tile.classList.remove('is-active');
+        tile.style.setProperty('--rx', '0deg');
+        tile.style.setProperty('--ry', '0deg');
+        tile.style.setProperty('--glare', '0');
+      });
+    });
+  }
+</script>

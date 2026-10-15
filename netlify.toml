@@ -1,6 +1,8 @@
 [build]
   publish = "dist"
   command = "npm run build"
+[build.environment]
+  FORM_MODE = "netlify"
 [build.processing.html]
   pretty_urls = false
 [[headers]]

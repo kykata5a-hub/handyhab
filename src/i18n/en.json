@@ -1,0 +1,237 @@
+{
+  "langName": "English",
+  "meta": {
+    "title": "Junk Removal in Los Angeles — Same-Day & Next-Day Pickup | Handy Hab",
+    "description": "Furniture, appliance, garage and estate cleanouts across Los Angeles. Free upfront estimate, we do all the lifting and sweep up. Call or WhatsApp today.",
+    "privacyTitle": "Privacy Policy",
+    "notFoundTitle": "Page not found"
+  },
+  "a11y": {
+    "skip": "Skip to content",
+    "home": "Home page",
+    "mainNav": "Main navigation",
+    "language": "Language",
+    "themeToggle": "Switch between light and dark theme",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
+  },
+  "nav": {
+    "services": "Services",
+    "results": "Before & after",
+    "process": "How it works",
+    "areas": "Areas",
+    "faq": "FAQ",
+    "book": "Book a pickup"
+  },
+  "hero": {
+    "title": "LA’s #1 disposal choice",
+    "lead": "Full service junk removal & residential cleanouts",
+    "ctaEstimate": "Free estimate",
+    "callCta": "Call us today",
+    "imageAlt": "Handy Hab pickup truck hauling a loaded junk trailer on a Los Angeles freeway at sunset",
+    "ctaWhatsapp": "WhatsApp us"
+  },
+  "trust": [
+    {
+      "title": "Same-day & next-day",
+      "text": "Fast dispatch all across Los Angeles."
+    },
+    {
+      "title": "Upfront pricing",
+      "text": "Free estimate before we start. No hidden fees."
+    },
+    {
+      "title": "Full service",
+      "text": "We do 100% of the loading, heavy lifting and sweeping up."
+    }
+  ],
+  "services": {
+    "title": "What we haul",
+    "intro": "If two people can carry it and it isn't hazardous, it goes on the truck.",
+    "items": [
+      {
+        "title": "Furniture & appliance removal",
+        "text": "Couches, mattresses, dressers, fridges, washers and dryers — carried out from any floor."
+      },
+      {
+        "title": "Garage, basement & attic cleanouts",
+        "text": "Years of boxes, old tools and broken gear cleared in one visit."
+      },
+      {
+        "title": "Estate & whole-house cleanouts",
+        "text": "Respectful, complete cleanouts for moves, sales and inherited homes."
+      },
+      {
+        "title": "Yard waste & construction debris",
+        "text": "Branches, soil, drywall, tile, wood and remodel leftovers."
+      },
+      {
+        "title": "Storage unit cleanouts",
+        "text": "Empty the unit and stop paying rent on things you don't need."
+      },
+      {
+        "title": "Commercial & office hauling",
+        "text": "Desks, chairs, cubicles, e-waste and retail fixtures, after hours if needed."
+      }
+    ]
+  },
+  "gallery": {
+    "title": "Before & after",
+    "intro": "Drag the handle to see the same space before we arrived and after we left.",
+    "before": "Before",
+    "after": "After",
+    "slider": "Before and after comparison. Use the left and right arrow keys to move the divider."
+  },
+  "steps": {
+    "title": "How it works",
+    "items": [
+      {
+        "title": "Book",
+        "text": "Call, WhatsApp or send the form with a few photos. You get a free, upfront price."
+      },
+      {
+        "title": "We haul",
+        "text": "The crew arrives in the window you chose, confirms the price and does all the lifting."
+      },
+      {
+        "title": "Clean space",
+        "text": "We sweep up, then donate, recycle or responsibly dispose of everything we take."
+      }
+    ]
+  },
+  "areas": {
+    "title": "Where we work",
+    "intro": "We cover Los Angeles and nearby cities. Don't see your neighborhood? Ask — we probably go there.",
+    "cta": "Check my ZIP code"
+  },
+  "faq": {
+    "title": "Questions people ask",
+    "items": [
+      {
+        "q": "How much does junk removal cost?",
+        "a": "The price depends on how much space your items take in the truck and how hard they are to reach. Send a few photos for a free estimate, or we'll quote on site before any work starts. The price we quote is the price you pay."
+      },
+      {
+        "q": "What do you take?",
+        "a": "Furniture, mattresses, appliances, electronics, boxes, yard waste, construction debris, exercise equipment and most household or office items."
+      },
+      {
+        "q": "What don't you take?",
+        "a": "Hazardous materials: paint, solvents, chemicals, motor oil, propane tanks, asbestos and medical waste. We can point you to an LA County drop-off site for those."
+      },
+      {
+        "q": "How fast can you come?",
+        "a": "Same-day pickup is often possible if you book early in the day. Next-day slots are almost always open. You choose a morning, afternoon or evening window."
+      },
+      {
+        "q": "Where does my stuff go?",
+        "a": "Usable furniture and goods go to local donation centers. Metal, cardboard, electronics and appliances are recycled. Only what's left goes to a licensed transfer station."
+      },
+      {
+        "q": "Do I need to be home?",
+        "a": "Not always. If the items are outside or in an open garage, we can do the job and send photos when it's done."
+      }
+    ]
+  },
+  "form": {
+    "title": "Book a pickup",
+    "intro": "Tell us what needs to go. We'll reply with a free estimate, usually within the hour during business hours.",
+    "name": "Your name",
+    "phone": "Phone",
+    "email": "Email",
+    "optional": "optional",
+    "zip": "ZIP code",
+    "service": "What needs to go",
+    "servicePlaceholder": "Choose a service",
+    "serviceOptions": {
+      "furniture": "Furniture & appliances",
+      "garage": "Garage, basement or attic",
+      "estate": "Estate or whole house",
+      "yard": "Yard waste or construction debris",
+      "storage": "Storage unit",
+      "commercial": "Commercial or office",
+      "other": "Something else"
+    },
+    "date": "Preferred date",
+    "time": "Time window",
+    "timeOptions": {
+      "morning": "Morning (8–12)",
+      "afternoon": "Afternoon (12–4)",
+      "evening": "Evening (4–8)"
+    },
+    "description": "Describe the items",
+    "descriptionHint": "What and roughly how much, which floor, stairs or elevator.",
+    "photos": "Photos of the junk",
+    "photosHint": "Up to 3 images, 5 MB each. Photos help us give an exact price.",
+    "photosChoose": "Add photos",
+    "honeypot": "Leave this field empty",
+    "privacy": "By sending this form you agree to our",
+    "privacyLink": "privacy policy",
+    "submit": "Send request",
+    "sending": "Sending…",
+    "successTitle": "Request sent",
+    "successText": "Thanks! We'll contact you shortly with your free estimate. Need it faster? Call us.",
+    "errorTitle": "Your request wasn't sent",
+    "errorText": "Something went wrong on our side. Please call or WhatsApp us instead — we'll answer right away.",
+    "rateLimited": "Too many requests from your connection. Please wait a few minutes or call us.",
+    "errors": {
+      "required": "Fill in this field.",
+      "phone": "Enter a phone number with 10 digits, e.g. (213) 555-0123.",
+      "email": "Enter an email like name@example.com, or leave it empty.",
+      "zip": "Enter a 5-digit ZIP code.",
+      "date": "Choose today or a later date.",
+      "fileCount": "You can attach up to 3 photos.",
+      "fileSize": "Each photo must be under 5 MB.",
+      "fileType": "Only JPG, PNG, WebP or HEIC images.",
+      "summary": "Check the highlighted fields."
+    }
+  },
+  "footer": {
+    "contact": "Contact",
+    "hours": "Hours",
+    "hoursText": "Every day, 7 am – 8 pm",
+    "licensed": "Licensed & insured",
+    "privacy": "Privacy policy",
+    "rights": "All rights reserved."
+  },
+  "whatsapp": {
+    "label": "Chat with us on WhatsApp",
+    "message": "Hi! I'd like a free estimate for junk removal."
+  },
+  "privacy": {
+    "title": "Privacy policy",
+    "updated": "Last updated: October 2026. Draft — pending client approval.",
+    "sections": [
+      {
+        "h": "What we collect",
+        "p": "When you send the booking form we receive your name, phone number, ZIP code, and optionally your email, preferred date, a description of the items and up to three photos."
+      },
+      {
+        "h": "Why we collect it",
+        "p": "Only to give you an estimate, schedule the pickup and contact you about it. We don't sell your data and don't use it for advertising."
+      },
+      {
+        "h": "How long we keep it",
+        "p": "Requests are kept for up to 12 months for scheduling and accounting, then deleted. Photos are deleted after the job is done."
+      },
+      {
+        "h": "Who sees it",
+        "p": "Our team and our email provider, which delivers the request to us. Nobody else."
+      },
+      {
+        "h": "Your rights",
+        "p": "California residents can ask us what data we hold about them, ask for a copy, or ask us to delete it. Email or call us and we'll handle it within 30 days."
+      },
+      {
+        "h": "Cookies",
+        "p": "This site doesn't use tracking cookies. Your browser stores only your language and theme choice."
+      }
+    ],
+    "back": "Back to home page"
+  },
+  "notFound": {
+    "title": "Nothing to haul here",
+    "text": "This page doesn't exist. Head back to the home page or give us a call.",
+    "back": "Back to home page"
+  }
+}

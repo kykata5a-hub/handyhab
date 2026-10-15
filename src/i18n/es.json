@@ -1,0 +1,237 @@
+{
+  "langName": "Español",
+  "meta": {
+    "title": "Retiro de basura en Los Ángeles — Servicio el mismo día y al día siguiente | Handy Hab",
+    "description": "Retiro de muebles, electrodomésticos y limpieza de garajes y casas en Los Ángeles. Cotización gratis por adelantado; nosotros cargamos todo y barremos. Llámenos o escríbanos por WhatsApp.",
+    "privacyTitle": "Aviso de privacidad",
+    "notFoundTitle": "Página no encontrada"
+  },
+  "a11y": {
+    "skip": "Ir al contenido",
+    "home": "Página de inicio",
+    "mainNav": "Navegación principal",
+    "language": "Idioma",
+    "themeToggle": "Cambiar entre tema claro y oscuro",
+    "menuOpen": "Abrir menú",
+    "menuClose": "Cerrar menú"
+  },
+  "nav": {
+    "services": "Servicios",
+    "results": "Resultados",
+    "process": "Proceso",
+    "areas": "Zonas",
+    "faq": "Preguntas",
+    "book": "Agendar"
+  },
+  "hero": {
+    "title": "La opción #1 en LA",
+    "lead": "Retiro de basura con servicio completo y limpieza de casas",
+    "ctaEstimate": "Cotización gratis",
+    "callCta": "Llámenos hoy",
+    "imageAlt": "Camioneta de Handy Hab con un remolque lleno de basura en una autopista de Los Ángeles al atardecer",
+    "ctaWhatsapp": "Escríbanos por WhatsApp"
+  },
+  "trust": [
+    {
+      "title": "Mismo día y día siguiente",
+      "text": "Salimos rápido a cualquier parte de Los Ángeles."
+    },
+    {
+      "title": "Precio por adelantado",
+      "text": "Cotización gratis antes de empezar. Sin cargos ocultos."
+    },
+    {
+      "title": "Servicio completo",
+      "text": "Nosotros hacemos toda la carga, el trabajo pesado y la barrida."
+    }
+  ],
+  "services": {
+    "title": "Qué nos llevamos",
+    "intro": "Si dos personas lo pueden cargar y no es material peligroso, se va en la troca.",
+    "items": [
+      {
+        "title": "Retiro de muebles y electrodomésticos",
+        "text": "Sillones, colchones, cómodas, refrigeradores, lavadoras y secadoras, desde cualquier piso."
+      },
+      {
+        "title": "Limpieza de garaje, sótano y ático",
+        "text": "Años de cajas, herramientas viejas y cosas rotas, fuera en una sola visita."
+      },
+      {
+        "title": "Limpieza de casas completas y herencias",
+        "text": "Vaciamos la casa con respeto, ya sea por mudanza, venta o herencia."
+      },
+      {
+        "title": "Desechos de jardín y escombro",
+        "text": "Ramas, tierra, tablaroca, azulejo, madera y restos de remodelación."
+      },
+      {
+        "title": "Limpieza de bodegas de almacenamiento",
+        "text": "Vacíe la bodega y deje de pagar renta por cosas que ya no necesita."
+      },
+      {
+        "title": "Retiro comercial y de oficinas",
+        "text": "Escritorios, sillas, cubículos, desechos electrónicos y mobiliario de tienda, también fuera de horario."
+      }
+    ]
+  },
+  "gallery": {
+    "title": "Antes y después",
+    "intro": "Deslice la barra para ver el mismo lugar antes de llegar nosotros y después de irnos.",
+    "before": "Antes",
+    "after": "Después",
+    "slider": "Comparación de antes y después. Use las flechas izquierda y derecha para mover la barra."
+  },
+  "steps": {
+    "title": "Cómo funciona",
+    "items": [
+      {
+        "title": "Agende",
+        "text": "Llame, escriba por WhatsApp o mande el formulario con unas fotos. Le damos un precio gratis por adelantado."
+      },
+      {
+        "title": "Nos lo llevamos",
+        "text": "El equipo llega en el horario que usted eligió, confirma el precio y hace todo el trabajo pesado."
+      },
+      {
+        "title": "Espacio limpio",
+        "text": "Barremos y luego donamos, reciclamos o desechamos correctamente todo lo que nos llevamos."
+      }
+    ]
+  },
+  "areas": {
+    "title": "Dónde trabajamos",
+    "intro": "Cubrimos Los Ángeles y ciudades cercanas. ¿No ve su colonia? Pregúntenos, seguramente llegamos.",
+    "cta": "Consultar mi código postal"
+  },
+  "faq": {
+    "title": "Preguntas frecuentes",
+    "items": [
+      {
+        "q": "¿Cuánto cuesta el retiro de basura?",
+        "a": "El precio depende de cuánto espacio ocupen sus cosas en la troca y qué tan difícil sea sacarlas. Mándenos unas fotos para una cotización gratis, o le damos el precio en el lugar antes de empezar. El precio que le damos es el que paga."
+      },
+      {
+        "q": "¿Qué se llevan?",
+        "a": "Muebles, colchones, electrodomésticos, aparatos electrónicos, cajas, desechos de jardín, escombro, aparatos de ejercicio y casi cualquier cosa de casa u oficina."
+      },
+      {
+        "q": "¿Qué no se llevan?",
+        "a": "Materiales peligrosos: pintura, solventes, químicos, aceite de motor, tanques de gas, asbesto y desechos médicos. Le podemos indicar un centro de acopio del condado de Los Ángeles para esas cosas."
+      },
+      {
+        "q": "¿Qué tan rápido pueden venir?",
+        "a": "Muchas veces podemos ir el mismo día si agenda temprano. Casi siempre hay lugar para el día siguiente. Usted elige horario de mañana, tarde o noche."
+      },
+      {
+        "q": "¿A dónde van mis cosas?",
+        "a": "Los muebles y artículos en buen estado se donan a centros locales. El metal, cartón, electrónicos y electrodomésticos se reciclan. Solo lo que sobra va a una estación de transferencia autorizada."
+      },
+      {
+        "q": "¿Necesito estar en casa?",
+        "a": "No siempre. Si las cosas están afuera o en un garaje abierto, hacemos el trabajo y le mandamos fotos al terminar."
+      }
+    ]
+  },
+  "form": {
+    "title": "Agende su retiro",
+    "intro": "Cuéntenos qué hay que sacar. Le respondemos con una cotización gratis, normalmente en menos de una hora en horario de servicio.",
+    "name": "Su nombre",
+    "phone": "Teléfono",
+    "email": "Correo electrónico",
+    "optional": "opcional",
+    "zip": "Código postal",
+    "service": "Qué hay que sacar",
+    "servicePlaceholder": "Elija un servicio",
+    "serviceOptions": {
+      "furniture": "Muebles y electrodomésticos",
+      "garage": "Garaje, sótano o ático",
+      "estate": "Casa completa o herencia",
+      "yard": "Desechos de jardín o escombro",
+      "storage": "Bodega de almacenamiento",
+      "commercial": "Comercio u oficina",
+      "other": "Otra cosa"
+    },
+    "date": "Fecha preferida",
+    "time": "Horario",
+    "timeOptions": {
+      "morning": "Mañana (8–12)",
+      "afternoon": "Tarde (12–4)",
+      "evening": "Noche (4–8)"
+    },
+    "description": "Describa las cosas",
+    "descriptionHint": "Qué y más o menos cuánto, en qué piso, si hay escaleras o elevador.",
+    "photos": "Fotos de las cosas",
+    "photosHint": "Hasta 3 imágenes de 5 MB cada una. Con fotos le damos un precio exacto.",
+    "photosChoose": "Agregar fotos",
+    "honeypot": "Deje este campo vacío",
+    "privacy": "Al enviar este formulario acepta nuestro",
+    "privacyLink": "aviso de privacidad",
+    "submit": "Enviar solicitud",
+    "sending": "Enviando…",
+    "successTitle": "Solicitud enviada",
+    "successText": "¡Gracias! Nos comunicaremos con usted en breve con su cotización gratis. ¿Lo necesita más rápido? Llámenos.",
+    "errorTitle": "Su solicitud no se envió",
+    "errorText": "Hubo un problema de nuestro lado. Por favor llámenos o escríbanos por WhatsApp; le contestamos de inmediato.",
+    "rateLimited": "Demasiadas solicitudes desde su conexión. Espere unos minutos o llámenos.",
+    "errors": {
+      "required": "Llene este campo.",
+      "phone": "Escriba un teléfono de 10 dígitos, por ejemplo (213) 555-0123.",
+      "email": "Escriba un correo como nombre@ejemplo.com, o déjelo vacío.",
+      "zip": "Escriba un código postal de 5 dígitos.",
+      "date": "Elija hoy o una fecha posterior.",
+      "fileCount": "Puede adjuntar hasta 3 fotos.",
+      "fileSize": "Cada foto debe pesar menos de 5 MB.",
+      "fileType": "Solo imágenes JPG, PNG, WebP o HEIC.",
+      "summary": "Revise los campos marcados."
+    }
+  },
+  "footer": {
+    "contact": "Contacto",
+    "hours": "Horario",
+    "hoursText": "Todos los días, de 7 a. m. a 8 p. m.",
+    "licensed": "Con licencia y seguro",
+    "privacy": "Aviso de privacidad",
+    "rights": "Todos los derechos reservados."
+  },
+  "whatsapp": {
+    "label": "Escríbanos por WhatsApp",
+    "message": "¡Hola! Quisiera una cotización gratis para retiro de basura."
+  },
+  "privacy": {
+    "title": "Aviso de privacidad",
+    "updated": "Última actualización: octubre de 2026. Borrador pendiente de aprobación del cliente.",
+    "sections": [
+      {
+        "h": "Qué datos recabamos",
+        "p": "Cuando envía el formulario recibimos su nombre, teléfono, código postal y, si lo desea, su correo, fecha preferida, una descripción de las cosas y hasta tres fotos."
+      },
+      {
+        "h": "Para qué los usamos",
+        "p": "Solo para darle una cotización, agendar el retiro y comunicarnos con usted. No vendemos sus datos ni los usamos para publicidad."
+      },
+      {
+        "h": "Cuánto tiempo los guardamos",
+        "p": "Las solicitudes se guardan hasta 12 meses para agenda y contabilidad, y luego se borran. Las fotos se borran al terminar el trabajo."
+      },
+      {
+        "h": "Quién los ve",
+        "p": "Nuestro equipo y nuestro proveedor de correo, que nos entrega la solicitud. Nadie más."
+      },
+      {
+        "h": "Sus derechos",
+        "p": "Los residentes de California pueden pedirnos qué datos tenemos, una copia de ellos o que los borremos. Escríbanos o llámenos y lo atendemos en un plazo de 30 días."
+      },
+      {
+        "h": "Cookies",
+        "p": "Este sitio no usa cookies de rastreo. Su navegador solo guarda el idioma y el tema que eligió."
+      }
+    ],
+    "back": "Volver a la página de inicio"
+  },
+  "notFound": {
+    "title": "Aquí no hay nada que llevarse",
+    "text": "Esta página no existe. Regrese a la página de inicio o llámenos.",
+    "back": "Volver a la página de inicio"
+  }
+}

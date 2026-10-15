@@ -1,140 +1,145 @@
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 import { defineConfig, fontProviders } from 'astro/config';
-
-import { unified } from '@astrojs/markdown-remark';
-
-import sitemap from '@astrojs/sitemap';
-import tailwindcss from '@tailwindcss/vite';
-import mdx from '@astrojs/mdx';
-import partytown from '@astrojs/partytown';
-import icon from 'astro-icon';
-import compress from 'astro-compress';
+import { loadEnv } from 'vite';
 import type { AstroIntegration } from 'astro';
 
-import astrowind from './vendor/integration';
-
-import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin } from './src/utils/frontmatter';
+import sitemap from '@astrojs/sitemap';
+import node from '@astrojs/node';
+import tailwindcss from '@tailwindcss/vite';
+import icon from 'astro-icon';
+import compress from 'astro-compress';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const hasExternalScripts = false;
-const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroIntegration)[] = []) =>
-  hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
+const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
+
+// Booking form submit mode: 'api' (own endpoint + SMTP), 'netlify' (Netlify Forms) or 'php' (public/booking.php).
+const FORM_MODE = (env.FORM_MODE || 'api') as 'api' | 'netlify' | 'php';
+// Netlify sets URL to the site's primary address (custom domain once added).
+const SITE_URL = env.SITE_URL || env.URL || 'https://example.com';
+
+// Hosts allowed to arrive via a reverse proxy (X-Forwarded-Host/Proto), e.g. a
+// preview tunnel. Needed so the booking endpoint's same-origin check passes there.
+const TRUSTED_HOSTS = [new URL(SITE_URL).hostname, ...(env.TRUSTED_HOSTS || '').split(',')]
+  .map((h) => h.trim())
+  .filter(Boolean);
+
+// In 'netlify' / 'php' mode the site is 100 % static: the SMTP endpoint is not
+// needed, so it is excluded from the build instead of requiring an adapter.
+const bookingEndpointToggle = (): AstroIntegration => ({
+  name: 'booking-endpoint-toggle',
+  hooks: {
+    'astro:route:setup': ({ route }) => {
+      if (FORM_MODE !== 'api' && route.component.endsWith('src/pages/api/booking.ts')) {
+        route.prerender = true;
+      }
+    },
+    // booking.php is only useful on PHP hosting; elsewhere it would be served as plain text.
+    'astro:build:done': ({ dir }) => {
+      if (FORM_MODE !== 'php') fs.rmSync(new URL('booking.php', dir), { force: true });
+      // The prerendered stub of the API route is useless on a static host.
+      if (FORM_MODE !== 'api') fs.rmSync(new URL('api', dir), { recursive: true, force: true });
+    },
+  },
+});
 
 export default defineConfig({
+  site: SITE_URL,
   output: 'static',
+  trailingSlash: 'ignore',
 
-  // Prefetch links as they enter the viewport for snappier navigations
-  // (works together with <ClientRouter />, which enables prefetch by default).
-  prefetch: {
-    prefetchAll: true,
-    defaultStrategy: 'viewport',
+  security: {
+    allowedDomains: TRUSTED_HOSTS.map((hostname) => ({ hostname, protocol: 'https' })),
   },
 
-  // Native Fonts API: self-hosts + subsets + preloads Inter and generates
-  // metric-adjusted fallbacks. Injected via <Font /> in Layout.astro and
-  // consumed through the `--font-inter` CSS variable in CustomStyles.astro.
+  // Only 'api' mode renders anything on demand (the booking endpoint).
+  // Node standalone is a placeholder — swap for the adapter of the chosen host.
+  adapter: FORM_MODE === 'api' ? node({ mode: 'standalone' }) : undefined,
+
+  i18n: {
+    locales: ['en', 'es', 'ru'],
+    defaultLocale: 'en',
+    routing: { prefixDefaultLocale: false },
+  },
+
   fonts: [
     {
-      provider: fontProviders.fontsource(),
-      name: 'Inter',
-      cssVariable: '--font-inter',
-      weights: ['100 900'],
+      provider: fontProviders.google(),
+      name: 'Oswald',
+      cssVariable: '--font-oswald',
+      weights: ['500', '700'],
       styles: ['normal'],
-      subsets: ['latin'],
+      subsets: ['latin', 'cyrillic'],
+      fallbacks: ['Arial Narrow', 'sans-serif'],
+    },
+    {
+      provider: fontProviders.google(),
+      name: 'Golos Text',
+      cssVariable: '--font-golos',
+      weights: ['400', '600'],
+      styles: ['normal'],
+      subsets: ['latin', 'cyrillic'],
       fallbacks: ['sans-serif'],
     },
   ],
 
   integrations: [
-    sitemap(),
-    mdx(),
+    bookingEndpointToggle(),
+    sitemap({
+      filter: (page) => !page.includes('/api/'),
+      i18n: {
+        defaultLocale: 'en',
+        locales: { en: 'en-US', es: 'es-MX', ru: 'ru' },
+      },
+    }),
     icon({
-      // Local SVG icons (used as <Icon name="file-name" />) live next to the other assets.
-      iconDir: 'src/assets/icons',
       include: {
-        tabler: ['*'],
-        'flat-color-icons': [
-          'template',
-          'gallery',
-          'approval',
-          'document',
-          'advertising',
-          'currency-exchange',
-          'voice-presentation',
-          'business-contact',
-          'database',
+        tabler: [
+          'sofa',
+          'home-2',
+          'building-warehouse',
+          'shovel',
+          'packages',
+          'building-skyscraper',
+          'phone',
+          'brand-whatsapp',
+          'sun',
+          'moon',
+          'menu-2',
+          'x',
+          'map-pin',
+          'clock',
+          'mail',
+          'arrows-horizontal',
+          'upload',
+          'circle-check',
+          'alert-triangle',
+          'truck-delivery',
+          'receipt',
+          'barbell',
         ],
       },
     }),
-
-    ...whenExternalScripts(() =>
-      partytown({
-        config: { forward: ['dataLayer.push'] },
-      })
-    ),
-
     compress({
-      // csso off on purpose: its parser doesn't understand the media range
-      // syntax Tailwind v4 emits for breakpoints (`@media (width>=48rem)`) and
-      // silently drops every one of those blocks — the site then renders as if
-      // all `md:`/`lg:` classes were missing. lightningcss parses it correctly.
       CSS: { csso: false, lightningcss: { minify: true } },
-      HTML: {
-        'html-minifier-terser': {
-          removeAttributeQuotes: false,
-        },
-      },
+      HTML: { 'html-minifier-terser': { removeAttributeQuotes: false } },
       Image: false,
       JavaScript: true,
       SVG: false,
       Logger: 1,
     }),
-
-    astrowind({
-      config: './src/config.yaml',
-    }),
   ],
-
-  image: {
-    // Astro's default Sharp service handles local images.
-    //
-    // Most remote CDN images (Unsplash, Cloudinary, Imgix…) are routed by
-    // src/components/common/Image.astro through `unpic`, which rewrites the
-    // URL with CDN-side query parameters and serves it straight from the
-    // provider — Astro never downloads it, so they don't need to be listed.
-    //
-    // `domains` only matters for remote URLs that fall through to Astro's
-    // native <Image /> (i.e. providers Unpic can't detect, like Pixabay).
-    // Listed entries are authorized to be processed by Sharp.
-    // Unsplash is listed so post covers can be rendered as real 1200×626 Open Graph images.
-    domains: ['cdn.pixabay.com', 'images.unsplash.com'],
-
-    // Emit responsive styles for the native <Image layout=…> used by
-    // src/components/common/Image.astro (local images). Utility classes on
-    // each usage still win, since these styles use low-specificity selectors.
-    responsiveStyles: true,
-  },
-
-  markdown: {
-    processor: unified({
-      remarkPlugins: [readingTimeRemarkPlugin],
-      rehypePlugins: [responsiveTablesRehypePlugin],
-    }),
-    shikiConfig: {
-      // Code blocks follow the site theme; see the `.astro-code` rules in tailwind.css.
-      themes: { light: 'github-light', dark: 'github-dark' },
-    },
-  },
 
   vite: {
     plugins: [tailwindcss()],
+    define: {
+      'import.meta.env.FORM_MODE': JSON.stringify(FORM_MODE),
+    },
     resolve: {
-      alias: {
-        '~': path.resolve(__dirname, './src'),
-      },
+      alias: { '~': path.resolve(__dirname, './src') },
     },
   },
 });

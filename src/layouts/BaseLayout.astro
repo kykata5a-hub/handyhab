@@ -1,0 +1,140 @@
+---
+import '~/assets/styles/tailwind.css';
+
+import { Font } from 'astro:assets';
+
+import Header from '~/components/Header.astro';
+import Footer from '~/components/Footer.astro';
+import WhatsAppFab from '~/components/WhatsAppFab.astro';
+import { business } from '~/config/business';
+import { languages, htmlLang, ogLocale, localePath, t, type Lang } from '~/i18n';
+
+import favicon from '~/assets/favicons/favicon.svg';
+
+export interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Page slug without language prefix: '' for home, 'privacy', … Used for hreflang/canonical. */
+  page?: string;
+  noindex?: boolean;
+}
+
+const { lang, title, description, page = '', noindex = false } = Astro.props;
+const d = t(lang);
+
+const site = Astro.site ?? new URL('https://example.com');
+const canonical = new URL(localePath(lang, page), site).href;
+const ogImage = new URL('/og-image.jpg', site).href;
+const subset = lang === 'ru' ? 'cyrillic' : 'latin';
+---
+
+<!doctype html>
+<html lang={htmlLang[lang]}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    {
+      !noindex &&
+        languages.map((l) => (
+          <link rel="alternate" hreflang={htmlLang[l]} href={new URL(localePath(l, page), site).href} />
+        ))
+    }
+    {!noindex && <link rel="alternate" hreflang="x-default" href={new URL(localePath('en', page), site).href} />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={business.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={ogLocale[lang]} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/svg+xml" href={favicon.src} />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0E0E0F" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <Font cssVariable="--font-oswald" preload={[{ weight: '700', subset }]} />
+    <Font cssVariable="--font-golos" preload={[{ weight: '400', subset }]} />
+
+    <script is:inline>
+      // Theme: before first paint to avoid a flash. Stored choice wins over the OS setting.
+      (() => {
+        let stored = null;
+        try {
+          stored = localStorage.getItem('theme');
+        } catch {
+          /* storage blocked */
+        }
+        const dark = stored ? stored === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', dark);
+      })();
+    </script>
+
+    <script is:inline define:vars={{ pageLang: lang, page, skip: noindex }}>
+      // Language auto-detect. Never for bots or non-indexed pages (404). The choice is
+      // stored BEFORE redirecting and the switcher overwrites it, so there are no loops.
+      (() => {
+        if (skip) return;
+        const KEY = 'lang';
+        let stored;
+        try {
+          stored = localStorage.getItem(KEY);
+        } catch {
+          return;
+        }
+        const isBot =
+          navigator.webdriver || /bot|crawl|spider|slurp|lighthouse|headless|preview/i.test(navigator.userAgent);
+        if (isBot) return;
+        const go = (l) => location.replace(`/${l}/${page || ''}${location.hash}`);
+
+        if (stored) {
+          // A stored ES/RU choice brings the visitor back to it from EN pages.
+          if (pageLang === 'en' && (stored === 'es' || stored === 'ru')) go(stored);
+          return;
+        }
+        if (pageLang !== 'en') {
+          // Arrived on /es/ or /ru/ directly: respect it.
+          localStorage.setItem(KEY, pageLang);
+          return;
+        }
+        const list = navigator.languages?.length ? navigator.languages : [navigator.language || ''];
+        let target = 'en';
+        for (const raw of list) {
+          const l = String(raw).toLowerCase();
+          if (l.startsWith('es')) target = 'es';
+          else if (l.startsWith('ru') || l.startsWith('uk')) target = 'ru';
+          else if (!l.startsWith('en')) continue;
+          break; // first es/ru/uk/en preference decides
+        }
+        localStorage.setItem(KEY, target);
+        if (target !== 'en') go(target);
+      })();
+    </script>
+
+    <slot name="head" />
+  </head>
+
+  <body class="flex min-h-screen flex-col antialiased">
+    <a
+      href="#main"
+      class="bg-orange text-on-orange sr-only z-[100] px-4 py-3 font-semibold focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+      >{d.a11y.skip}</a
+    >
+    <Header lang={lang} page={page} />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <WhatsAppFab lang={lang} />
+  </body>
+</html>

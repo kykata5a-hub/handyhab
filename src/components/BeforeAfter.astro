@@ -1,0 +1,147 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+import { t, type Lang } from '~/i18n';
+
+export interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+
+// Pairs are picked up automatically: NN-before.jpg + NN-after.jpg.
+const files = import.meta.glob<{ default: ImageMetadata }>('/src/assets/before-after/*.{jpg,jpeg,png,webp}', {
+  eager: true,
+});
+
+const byNumber = new Map<string, { before?: ImageMetadata; after?: ImageMetadata }>();
+for (const [file, mod] of Object.entries(files)) {
+  const m = file.match(/\/(\d+)-(before|after)\.\w+$/);
+  if (!m) continue;
+  const entry = byNumber.get(m[1]) ?? {};
+  entry[m[2] as 'before' | 'after'] = mod.default;
+  byNumber.set(m[1], entry);
+}
+const pairs = [...byNumber.entries()]
+  .sort(([a], [b]) => Number(a) - Number(b))
+  .filter(([, p]) => p.before && p.after)
+  .map(([n, p]) => ({ n, before: p.before!, after: p.after! }));
+---
+
+<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+  {
+    pairs.map((p) => (
+      <figure class="m-0">
+        <div
+          class="ba bg-slab relative cursor-ew-resize overflow-hidden rounded-sm select-none"
+          style="--pos: 50%"
+          data-ba
+        >
+          <Image
+            src={p.after}
+            alt={`${d.gallery.after} ${p.n}`}
+            widths={[400, 640, 960]}
+            sizes="(min-width: 1024px) 384px, (min-width: 640px) 50vw, 100vw"
+            loading="lazy"
+            class="block h-auto w-full"
+            draggable="false"
+          />
+          <div class="ba-before absolute inset-0">
+            <Image
+              src={p.before}
+              alt={`${d.gallery.before} ${p.n}`}
+              widths={[400, 640, 960]}
+              sizes="(min-width: 1024px) 384px, (min-width: 640px) 50vw, 100vw"
+              loading="lazy"
+              class="block h-full w-full object-cover"
+              draggable="false"
+            />
+          </div>
+          <span class="bg-slab/85 text-on-slab font-display pointer-events-none absolute top-3 left-3 px-2.5 py-1 text-sm uppercase">
+            {d.gallery.before}
+          </span>
+          <span class="bg-orange text-on-orange font-display pointer-events-none absolute top-3 right-3 px-2.5 py-1 text-sm uppercase">
+            {d.gallery.after}
+          </span>
+          <div class="ba-line pointer-events-none absolute inset-y-0 w-[3px] -translate-x-1/2 bg-[#F5F3F0]" />
+          <div
+            class="ba-handle bg-orange text-on-orange absolute top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full shadow-[0_4px_14px_rgb(0_0_0/0.4)]"
+            role="slider"
+            tabindex="0"
+            aria-label={d.gallery.slider}
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="50"
+            aria-valuetext="50%"
+          >
+            <svg viewBox="0 0 24 24" class="h-6 w-6" aria-hidden="true" fill="currentColor">
+              <path d="M9 6 3 12l6 6V6Zm6 0v12l6-6-6-6Z" />
+            </svg>
+          </div>
+        </div>
+      </figure>
+    ))
+  }
+</div>
+
+<style>
+  .ba {
+    touch-action: pan-y;
+  }
+  .ba-before {
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+  }
+  .ba-line,
+  .ba-handle {
+    left: var(--pos);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ba]').forEach((box) => {
+    const handle = box.querySelector<HTMLElement>('[role="slider"]')!;
+    let pos = 50;
+    let dragging = false;
+
+    const set = (v: number) => {
+      pos = Math.max(0, Math.min(100, v));
+      box.style.setProperty('--pos', `${pos}%`);
+      const r = Math.round(pos);
+      handle.setAttribute('aria-valuenow', String(r));
+      handle.setAttribute('aria-valuetext', `${r}%`);
+    };
+    const fromEvent = (e: PointerEvent) => {
+      const rect = box.getBoundingClientRect();
+      set(((e.clientX - rect.left) / rect.width) * 100);
+    };
+
+    box.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      box.setPointerCapture(e.pointerId);
+      fromEvent(e);
+    });
+    box.addEventListener('pointermove', (e) => dragging && fromEvent(e));
+    const stop = () => (dragging = false);
+    box.addEventListener('pointerup', stop);
+    box.addEventListener('pointercancel', stop);
+
+    handle.addEventListener('keydown', (e) => {
+      const step = e.shiftKey ? 10 : 5;
+      const keys: Record<string, number> = {
+        ArrowLeft: pos - step,
+        ArrowDown: pos - step,
+        ArrowRight: pos + step,
+        ArrowUp: pos + step,
+        PageDown: pos - 20,
+        PageUp: pos + 20,
+        Home: 0,
+        End: 100,
+      };
+      if (e.key in keys) {
+        e.preventDefault();
+        set(keys[e.key]);
+      }
+    });
+  });
+</script>

@@ -1,0 +1,201 @@
+---
+import { Icon } from 'astro-icon/components';
+
+import Logo from '~/components/Logo.astro';
+import { business, telHref } from '~/config/business';
+import { languages, localePath, t, type Lang } from '~/i18n';
+
+export interface Props {
+  lang: Lang;
+  page?: string;
+}
+
+const { lang, page = '' } = Astro.props;
+const d = t(lang);
+const home = localePath(lang);
+const anchor = (id: string) => (page ? `${home}#${id}` : `#${id}`);
+
+const links = [
+  { id: 'services', label: d.nav.services },
+  { id: 'results', label: d.nav.results },
+  { id: 'process', label: d.nav.process },
+  { id: 'areas', label: d.nav.areas },
+  { id: 'faq', label: d.nav.faq },
+  { id: 'book', label: d.nav.book },
+];
+
+const langLinks = languages.map((l) => ({
+  code: l,
+  href: localePath(l, page),
+  name: t(l).langName,
+  current: l === lang,
+}));
+---
+
+<header class="bg-slab text-on-slab sticky top-0 z-50 border-b border-white/10">
+  <div class="wrap flex h-16 items-center gap-3 lg:h-[4.5rem]">
+    <a href={home} class="shrink-0" aria-label={d.a11y.home}>
+      <Logo />
+    </a>
+
+    <nav aria-label={d.a11y.mainNav} class="ml-auto hidden xl:block">
+      <ul class="flex items-center gap-5 text-[0.95rem] whitespace-nowrap 2xl:gap-6">
+        {
+          links.map((l) => (
+            <li>
+              <a href={anchor(l.id)} class="hover:text-orange py-2 transition-colors">
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="ml-auto hidden items-center gap-1 lg:flex xl:ml-4" role="group" aria-label={d.a11y.language}>
+      {
+        langLinks.map((l) => (
+          <a
+            href={l.href}
+            hreflang={l.code}
+            lang={l.code}
+            title={l.name}
+            data-set-lang={l.code}
+            aria-current={l.current ? 'true' : undefined}
+            class:list={[
+              'grid h-10 min-w-10 place-items-center rounded-sm px-1.5 text-sm font-semibold uppercase',
+              l.current ? 'bg-white/10 text-orange' : 'text-on-slab-muted hover:text-on-slab',
+            ]}
+          >
+            {l.code}
+          </a>
+        ))
+      }
+    </div>
+
+    <button
+      type="button"
+      data-theme-toggle
+      aria-label={d.a11y.themeToggle}
+      class="text-on-slab-muted hover:text-on-slab hidden h-11 w-11 place-items-center lg:grid"
+    >
+      <Icon name="tabler:moon" class="h-6 w-6 dark:hidden" aria-hidden="true" />
+      <Icon name="tabler:sun" class="hidden h-6 w-6 dark:block" aria-hidden="true" />
+    </button>
+
+    <a href={telHref} class="btn btn-orange ml-auto min-h-11 px-3 text-base sm:px-4 lg:ml-2">
+      <Icon name="tabler:phone" class="h-5 w-5" aria-hidden="true" />
+      <span class="hidden sm:inline">{business.phone.display}</span>
+      <span class="sr-only sm:hidden">{business.phone.display}</span>
+    </a>
+
+    <button
+      type="button"
+      class="grid h-11 w-11 place-items-center xl:hidden"
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+      data-menu-toggle
+      data-label-open={d.a11y.menuOpen}
+      data-label-close={d.a11y.menuClose}
+      aria-label={d.a11y.menuOpen}
+    >
+      <Icon name="tabler:menu-2" class="h-7 w-7" aria-hidden="true" data-icon-open />
+      <Icon name="tabler:x" class="hidden h-7 w-7" aria-hidden="true" data-icon-close />
+    </button>
+  </div>
+
+  <div id="mobile-menu" hidden class="border-t border-white/10 xl:hidden">
+    <nav aria-label={d.a11y.mainNav} class="wrap py-4">
+      <ul class="grid">
+        {
+          links.map((l) => (
+            <li>
+              <a
+                href={anchor(l.id)}
+                data-menu-link
+                class="font-display hover:text-orange block border-b border-white/10 py-3.5 text-2xl uppercase"
+              >
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="flex items-center justify-between gap-4 pt-5 lg:hidden">
+        <div class="flex gap-1" role="group" aria-label={d.a11y.language}>
+          {
+            langLinks.map((l) => (
+              <a
+                href={l.href}
+                hreflang={l.code}
+                lang={l.code}
+                title={l.name}
+                data-set-lang={l.code}
+                aria-current={l.current ? 'true' : undefined}
+                class:list={[
+                  'grid h-11 min-w-11 place-items-center rounded-sm px-2 font-semibold uppercase',
+                  l.current ? 'text-orange bg-white/10' : 'text-on-slab-muted',
+                ]}
+              >
+                {l.code}
+              </a>
+            ))
+          }
+        </div>
+        <button
+          type="button"
+          data-theme-toggle
+          aria-label={d.a11y.themeToggle}
+          class="text-on-slab-muted grid h-11 w-11 place-items-center"
+        >
+          <Icon name="tabler:moon" class="h-6 w-6 dark:hidden" aria-hidden="true" />
+          <Icon name="tabler:sun" class="hidden h-6 w-6 dark:block" aria-hidden="true" />
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const dark = document.documentElement.classList.toggle('dark');
+      try {
+        localStorage.setItem('theme', dark ? 'dark' : 'light');
+      } catch {
+        /* storage blocked: theme still switches for this page view */
+      }
+    })
+  );
+
+  // Manual language choice always overrides auto-detection.
+  document.querySelectorAll<HTMLAnchorElement>('[data-set-lang]').forEach((a) =>
+    a.addEventListener('click', () => {
+      try {
+        localStorage.setItem('lang', a.dataset.setLang || 'en');
+      } catch {
+        /* ignore */
+      }
+    })
+  );
+
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.getElementById('mobile-menu');
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      menu.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) || '');
+      toggle.querySelector('[data-icon-open]')?.classList.toggle('hidden', open);
+      toggle.querySelector('[data-icon-close]')?.classList.toggle('hidden', !open);
+    };
+    toggle.addEventListener('click', () => setOpen(menu.hidden));
+    menu.querySelectorAll('[data-menu-link]').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.hidden) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>

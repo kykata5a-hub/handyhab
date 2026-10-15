@@ -1,0 +1,77 @@
+---
+import { Icon } from 'astro-icon/components';
+
+import Logo from '~/components/Logo.astro';
+import { business, telHref, whatsappHref } from '~/config/business';
+import { localePath, t, type Lang } from '~/i18n';
+
+export interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-slab text-on-slab pb-24 sm:pb-10">
+  <div
+    class="h-2 bg-[repeating-linear-gradient(-45deg,var(--c-orange)_0_14px,transparent_14px_28px)]"
+    aria-hidden="true"
+  >
+  </div>
+  <div class="wrap grid gap-8 pt-10 md:grid-cols-[1.4fr_1fr_1fr]">
+    <div>
+      <Logo />
+      <p class="text-on-slab-muted mt-4 max-w-sm">{d.hero.lead}</p>
+      <p class="text-on-slab-muted mt-2 text-sm">{d.footer.licensed} · {business.license}</p>
+    </div>
+
+    <div>
+      <h2 class="font-display text-xl">{d.footer.contact}</h2>
+      <ul class="mt-4 grid gap-3">
+        <li>
+          <a href={telHref} class="hover:text-orange inline-flex items-center gap-2.5 py-1 font-semibold">
+            <Icon name="tabler:phone" class="text-orange h-5 w-5" aria-hidden="true" />
+            {business.phone.display}
+          </a>
+        </li>
+        <li>
+          <a
+            href={whatsappHref(d.whatsapp.message)}
+            class="hover:text-orange inline-flex items-center gap-2.5 py-1"
+            rel="noopener"
+            target="_blank"
+          >
+            <Icon name="tabler:brand-whatsapp" class="text-orange h-5 w-5" aria-hidden="true" />
+            WhatsApp
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${business.email}`} class="hover:text-orange inline-flex items-center gap-2.5 py-1">
+            <Icon name="tabler:mail" class="text-orange h-5 w-5" aria-hidden="true" />
+            {business.email}
+          </a>
+        </li>
+        <li class="text-on-slab-muted inline-flex items-center gap-2.5 py-1">
+          <Icon name="tabler:map-pin" class="text-orange h-5 w-5" aria-hidden="true" />
+          {business.address.locality}, {business.address.region}
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="font-display text-xl">{d.footer.hours}</h2>
+      <p class="mt-4 inline-flex items-center gap-2.5">
+        <Icon name="tabler:clock" class="text-orange h-5 w-5" aria-hidden="true" />
+        {d.footer.hoursText}
+      </p>
+    </div>
+  </div>
+
+  <div
+    class="wrap text-on-slab-muted mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm"
+  >
+    <p>© {year} {business.name}. {d.footer.rights}</p>
+    <a href={localePath(lang, 'privacy')} class="hover:text-on-slab underline underline-offset-4">{d.footer.privacy}</a>
+  </div>
+</footer>
