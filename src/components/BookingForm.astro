@@ -16,8 +16,15 @@ const f = d.form;
 const mode = (import.meta.env.FORM_MODE || 'api') as 'api' | 'netlify' | 'php';
 const home = localePath(lang);
 const action = { api: '/api/booking', php: '/booking.php', netlify: `${home}#booking-sent` }[mode];
+// Netlify takes the field labels for notification emails from the form it detects,
+// so only the EN form is registered; ES/RU submit to the same "booking" form via
+// the hidden form-name field and the emails stay in English.
 const netlifyAttrs =
-  mode === 'netlify' ? { 'data-netlify': 'true', 'netlify-honeypot': HONEYPOT, name: 'booking' } : {};
+  mode !== 'netlify'
+    ? {}
+    : lang === 'en'
+      ? { 'data-netlify': 'true', 'netlify-honeypot': HONEYPOT, name: 'booking' }
+      : { name: 'booking' };
 ---
 
 <div class="form-panel relative rounded-sm border p-5 sm:p-8 lg:p-10">
