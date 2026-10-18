@@ -83,6 +83,13 @@
     "after": "After",
     "slider": "Before and after comparison. Use the left and right arrow keys to move the divider."
   },
+  "reviews": {
+    "title": "What customers say",
+    "intro": "Real reviews from people we have helped across Los Angeles.",
+    "stars": "{n} out of 5 stars",
+    "direct": "Sent to us directly",
+    "summary": "{rating} · {count} reviews on {source}"
+  },
   "steps": {
     "title": "How it works",
     "items": [
@@ -185,13 +192,14 @@
       "fileSize": "Each photo must be under 5 MB.",
       "fileType": "Only JPG, PNG, WebP or HEIC images.",
       "summary": "Check the highlighted fields."
-    }
+    },
+    "termsLink": "terms of service",
+    "and": "and"
   },
   "footer": {
     "contact": "Contact",
     "hours": "Hours",
     "hoursText": "Every day, 7 am – 8 pm",
-    "licensed": "Licensed & insured",
     "privacy": "Privacy policy",
     "rights": "All rights reserved.",
     "terms": "Terms of service"
@@ -202,33 +210,165 @@
   },
   "privacy": {
     "title": "Privacy policy",
-    "updated": "Last updated: October 2026. Draft — pending client approval.",
+    "updated": "Last updated: October 18, 2026",
     "sections": [
       {
-        "h": "What we collect",
-        "p": "When you send the booking form we receive your name, phone number, ZIP code, and optionally your email, preferred date, a description of the items and up to three photos."
+        "h": "1. Who we are",
+        "items": [
+          {
+            "p": "This policy explains how HandyHab (\"we\", \"us\"), a junk removal company in Los Angeles, California, collects, uses and protects personal information when you visit handyhab.com, send us a request, or contact us by phone, text or WhatsApp."
+          }
+        ]
       },
       {
-        "h": "Why we collect it",
-        "p": "Only to give you an estimate, schedule the pickup and contact you about it. We don't sell your data and don't use it for advertising."
+        "h": "2. Information we collect",
+        "items": [
+          {
+            "b": "Information you give us.",
+            "p": "When you use the booking form, call, text or message us, we may receive:",
+            "list": [
+              "your name and phone number;",
+              "your ZIP code and, when you book, the pickup address;",
+              "your email address (optional);",
+              "your preferred date and arrival window;",
+              "a description of the items and up to 3 photos;",
+              "anything else you choose to tell us in messages or calls."
+            ]
+          },
+          {
+            "b": "Information collected automatically.",
+            "p": "Our hosting provider automatically processes technical data needed to deliver the website and keep it secure, such as your IP address, browser type, the pages requested and the time of the request. We do not use analytics, advertising or tracking tools."
+          },
+          {
+            "b": "Payments.",
+            "p": "Payments by Zelle, Venmo, Cash App, PayPal or Apple Pay are handled by the app you choose. We do not collect or store card numbers; we keep a record of the amount, date and method of payment."
+          },
+          {
+            "p": "We do not ask for sensitive personal information such as Social Security numbers, financial account logins or precise location tracking."
+          }
+        ]
       },
       {
-        "h": "How long we keep it",
-        "p": "Requests are kept for up to 12 months for scheduling and accounting, then deleted. Photos are deleted after the job is done."
+        "h": "3. How we use it",
+        "items": [
+          {
+            "p": "We use your information only to run our service:",
+            "list": [
+              "to prepare your estimate and confirm the price;",
+              "to schedule and carry out the job and contact you about it by call, text or WhatsApp;",
+              "to receive payment and keep business and tax records;",
+              "to answer questions and handle complaints or damage claims;",
+              "to protect the website from spam and abuse, and to comply with the law."
+            ]
+          },
+          {
+            "p": "We do not send marketing messages without your consent."
+          }
+        ]
       },
       {
-        "h": "Who sees it",
-        "p": "Our team and our email provider, which delivers the request to us. Nobody else."
+        "h": "4. How we share it",
+        "items": [
+          {
+            "p": "We do not sell or \"share\" your personal information as those terms are defined in California law, and we do not use it for targeted advertising. We disclose it only to:",
+            "list": [
+              "service providers that help us run the business: Netlify (website hosting and form delivery) and Google (email), under their own security and privacy terms;",
+              "WhatsApp and phone or payment apps, when you choose to contact or pay us through them; their own privacy policies apply;",
+              "authorities, when required by law or needed to protect people, property or our rights;",
+              "a buyer or successor, if the business is sold or reorganized."
+            ]
+          }
+        ]
       },
       {
-        "h": "Your rights",
-        "p": "California residents can ask us what data we hold about them, ask for a copy, or ask us to delete it. Email or call us and we'll handle it within 30 days."
+        "h": "5. Photos",
+        "items": [
+          {
+            "p": "Photos you upload are used only to prepare your estimate and plan the job. We do not publish photos of your property without your permission."
+          }
+        ]
       },
       {
-        "h": "Cookies",
-        "p": "This site doesn't use tracking cookies. Your browser stores only your language and theme choice."
+        "h": "6. How long we keep it",
+        "items": [
+          {
+            "list": [
+              "Requests that do not turn into a job: up to 12 months, then deleted.",
+              "Completed jobs and payments: as long as tax and accounting rules require."
+            ]
+          }
+        ]
+      },
+      {
+        "h": "7. Security",
+        "items": [
+          {
+            "p": "The website uses HTTPS encryption, and access to customer information is limited to our team. No method of transmission or storage is completely secure, but we take reasonable steps to protect your information."
+          }
+        ]
+      },
+      {
+        "h": "8. Your California privacy rights",
+        "items": [
+          {
+            "p": "If you live in California, you can ask us to:",
+            "list": [
+              "tell you what personal information we have about you, where it came from, why we use it and whom we disclosed it to;",
+              "give you a copy of it;",
+              "correct information that is inaccurate;",
+              "delete it, except records the law requires us to keep (for example, for taxes)."
+            ]
+          },
+          {
+            "p": "We do not sell or share personal information or use sensitive personal information, so there is nothing to opt out of. We will not treat you differently for using your rights."
+          },
+          {
+            "b": "How to make a request.",
+            "p": "Email or call us using the details below. To protect your information, we may ask you to confirm details we already have, such as your phone number. You may use an authorized agent with your written permission. We respond within 45 days."
+          },
+          {
+            "b": "Shine the Light.",
+            "p": "California residents may ask whether we disclose personal information to third parties for their direct marketing. We do not."
+          }
+        ]
+      },
+      {
+        "h": "9. Cookies and Do Not Track",
+        "items": [
+          {
+            "p": "The website does not use cookies for tracking or advertising. Your browser stores only your language and theme (light or dark) choice on your device, and the \"Powered by Netlify\" badge from our hosting provider may remember whether it is open. None of this is sent to us or used to identify you. Because we do not track visitors, Do Not Track and Global Privacy Control signals do not change anything: no tracking happens either way."
+          }
+        ]
+      },
+      {
+        "h": "10. Children",
+        "items": [
+          {
+            "p": "Our services are for adults 18 and over. We do not knowingly collect information from children under 13. If you believe a child has sent us information, contact us and we will delete it."
+          }
+        ]
+      },
+      {
+        "h": "11. Other websites and apps",
+        "items": [
+          {
+            "p": "Links to WhatsApp, phone and payment apps lead to services run by other companies. Their privacy policies apply when you use them."
+          }
+        ]
+      },
+      {
+        "h": "12. Changes to this policy",
+        "items": [
+          {
+            "p": "We may update this policy from time to time. The date at the top shows the latest version."
+          }
+        ]
       }
     ],
+    "contact": "13. Contact",
+    "phoneLabel": "Phone and WhatsApp",
+    "emailLabel": "Email",
+    "hoursLabel": "Hours",
     "back": "Back to home page"
   },
   "terms": {

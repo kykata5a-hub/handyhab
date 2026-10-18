@@ -3,19 +3,23 @@ import BaseLayout from '~/layouts/BaseLayout.astro';
 import { business, telHref, whatsappHref } from '~/config/business';
 import { localePath, t, type Lang } from '~/i18n';
 
+// Terms of service and privacy policy share one layout; text lives under d.terms / d.privacy.
 export interface Props {
   lang: Lang;
+  doc: 'terms' | 'privacy';
 }
-const { lang } = Astro.props;
+const { lang, doc } = Astro.props;
 const d = t(lang);
-const p = d.terms;
+const p = d[doc];
+const metaTitle = doc === 'terms' ? d.meta.termsTitle : d.meta.privacyTitle;
+const firstItem = p.sections[0].items[0];
 ---
 
 <BaseLayout
   lang={lang}
-  title={`${d.meta.termsTitle} — ${business.name}`}
-  description={p.sections[0].items[0].p}
-  page="terms"
+  title={`${metaTitle} — ${business.name}`}
+  description={'p' in firstItem ? firstItem.p : p.title}
+  page={doc}
 >
   <article class="section">
     <div class="wrap max-w-3xl">
@@ -27,12 +31,14 @@ const p = d.terms;
             <h2 class="text-2xl sm:text-3xl">{s.h}</h2>
             {s.items.map((i) => (
               <>
-                <p class="text-muted mt-3 max-w-prose">
-                  {'b' in i && i.b && <strong class="text-ink font-semibold">{i.b} </strong>}
-                  {i.p}
-                </p>
+                {'p' in i && (
+                  <p class="text-muted mt-3 max-w-prose">
+                    {'b' in i && i.b && <strong class="text-ink font-semibold">{i.b} </strong>}
+                    {i.p}
+                  </p>
+                )}
                 {'list' in i && i.list && (
-                  <ul class="text-muted marker:text-orange mt-2 max-w-prose list-disc space-y-1.5 pl-6">
+                  <ul class="text-muted marker:text-orange mt-3 max-w-prose list-disc space-y-1.5 pl-6">
                     {i.list.map((li) => <li>{li}</li>)}
                   </ul>
                 )}

@@ -182,6 +182,16 @@ const netlifyAttrs =
             aria-describedby="bf-photos-hint bf-photos-err"
           />
         </label>
+        {
+          /* Netlify Forms keeps one file per field: these register photo2/photo3 at deploy
+             time and the submit script moves the 2nd and 3rd photo into them. */
+          mode === 'netlify' && (
+            <>
+              <input type="file" name="photo2" hidden tabindex="-1" aria-hidden="true" />
+              <input type="file" name="photo3" hidden tabindex="-1" aria-hidden="true" />
+            </>
+          )
+        }
         <ul class="text-[var(--f-muted)] grid gap-1 text-sm" data-file-list></ul>
         <p class="text-[var(--f-muted)] text-sm" id="bf-photos-hint">{f.photosHint}</p>
         <p class="field-error" id="bf-photos-err"></p>
@@ -194,6 +204,9 @@ const netlifyAttrs =
       </button>
       <p class="text-[var(--f-muted)] text-sm">
         {f.privacy}{' '}<a
+          href={localePath(lang, 'terms')}
+          class="hover:text-[var(--f-ink)] underline underline-offset-4">{f.termsLink}</a
+        >{' '}{f.and}{' '}<a
           href={localePath(lang, 'privacy')}
           class="hover:text-[var(--f-ink)] underline underline-offset-4">{f.privacyLink}</a
         >.
@@ -327,6 +340,10 @@ const netlifyAttrs =
         const photos = body.getAll('photos');
         body.delete('photos');
         photos.forEach((p) => body.append('photos[]', p));
+      } else if (mode === 'netlify') {
+        const photos = body.getAll('photos').filter((p) => p instanceof File && p.size > 0);
+        ['photos', 'photo2', 'photo3'].forEach((k) => body.delete(k));
+        photos.forEach((p, i) => body.append(i === 0 ? 'photos' : `photo${i + 1}`, p));
       }
 
       try {

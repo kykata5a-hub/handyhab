@@ -5,6 +5,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import BeforeAfter from '~/components/BeforeAfter.astro';
 import BookingForm from '~/components/BookingForm.astro';
+import Reviews from '~/components/Reviews.astro';
 import { business, telHref, whatsappHref } from '~/config/business';
 import heroImage from '~/assets/hero.jpg';
 import { localePath, htmlLang, t, type Lang } from '~/i18n';
@@ -85,7 +86,7 @@ const schema = [
     <Image
       src={heroImage}
       alt={d.hero.imageAlt}
-      widths={[640, 960, 1584]}
+      widths={[640, 1024]}
       sizes="100vw"
       loading="eager"
       fetchpriority="high"
@@ -96,11 +97,11 @@ const schema = [
       <div class="hero-main">
         <div>
           <h1 class="hero-title">{d.hero.title}</h1>
-          <a href="#book" class="btn btn-orange hero-cta mt-5 px-8 text-xl">{d.hero.ctaEstimate}</a>
+          <a href="#book" class="btn btn-orange hero-cta hero-estimate mt-5 px-8 text-xl">{d.hero.ctaEstimate}</a>
         </div>
         <div>
           <p class="hero-sub font-display">{d.hero.lead}</p>
-          <div class="mt-5 flex flex-wrap items-stretch gap-3">
+          <div class="hero-actions mt-5 flex flex-wrap items-stretch gap-3">
             <a href={telHref} class="btn btn-orange hero-cta">
               <Icon name="tabler:phone" class="h-5 w-5" aria-hidden="true" />
               {d.hero.callCta}
@@ -184,6 +185,9 @@ const schema = [
       </div>
     </div>
   </section>
+
+  <!-- Reviews (hidden until src/config/reviews.ts has real reviews) -->
+  <Reviews lang={lang} />
 
   <!-- How it works -->
   <section id="process" class="section">
@@ -328,10 +332,10 @@ const schema = [
     text-shadow: 0 2px 14px rgb(0 0 0 / 0.5);
   }
   .hero-trust {
-    /* Cards stacked together at the bottom, level with the phone button. */
+    /* Cards span from the Free estimate button down to the phone button. */
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 0.4rem;
   }
   @media (width >= 48rem) {
@@ -366,14 +370,50 @@ const schema = [
     .hero-content .hero-cta {
       margin-top: 1rem;
     }
-    .hero-content .hero-main > div:last-child > div {
+    .hero-content .hero-actions {
       margin-top: 0.75rem;
       gap: 0.5rem;
+    }
+    /* Flatten the text column into the hero grid so the selling points can start
+       level with the Free estimate button. */
+    .hero-content {
+      grid-template-areas:
+        'title .'
+        'estimate trust'
+        'sub trust'
+        'actions trust';
+      grid-template-rows: auto auto 1fr auto;
+      row-gap: 0;
+    }
+    .hero-main,
+    .hero-main > div {
+      display: contents;
+    }
+    .hero-title {
+      grid-area: title;
+    }
+    .hero-estimate {
+      grid-area: estimate;
+    }
+    .hero-sub {
+      grid-area: sub;
+      margin-top: 1.5rem;
+    }
+    .hero-actions {
+      grid-area: actions;
+    }
+    .hero-trust {
+      grid-area: trust;
+      margin-top: 1rem; /* same as .hero-cta */
+    }
+    .hero-trust-item {
+      flex: 1;
+      align-items: center;
     }
   }
   @media (width >= 48rem) {
     .hero-img {
-      object-position: 62% 50%;
+      object-position: 50% 66%; /* keep the truck and trailer in the wide crop */
     }
     .hero-shade {
       background: linear-gradient(90deg, rgb(14 14 15 / 0.82) 0%, rgb(14 14 15 / 0.55) 32%, rgb(14 14 15 / 0) 58%);

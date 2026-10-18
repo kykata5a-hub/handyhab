@@ -1,0 +1,173 @@
+---
+import { Icon } from 'astro-icon/components';
+
+import { reviews as realReviews, reviewSummaries, sampleReviews, type ReviewSource } from '~/config/reviews';
+import { htmlLang, t, type Lang } from '~/i18n';
+
+export interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const r = d.reviews;
+
+const isSample = realReviews.length === 0 && import.meta.env.DEV;
+const reviews = isSample ? sampleReviews : realReviews;
+
+const sourceName: Record<ReviewSource, string> = {
+  google: 'Google',
+  yelp: 'Yelp',
+  facebook: 'Facebook',
+  nextdoor: 'Nextdoor',
+  thumbtack: 'Thumbtack',
+  direct: r.direct,
+};
+const sourceIcon: Partial<Record<ReviewSource, string>> = {
+  google: 'tabler:brand-google',
+  facebook: 'tabler:brand-facebook',
+};
+const monthFmt = new Intl.DateTimeFormat(htmlLang[lang], { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const formatDate = (ym: string) => monthFmt.format(new Date(`${ym}-01T00:00:00Z`));
+const ratingFmt = new Intl.NumberFormat(htmlLang[lang], { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const summaryText = (rating: number, count: number, source: ReviewSource) =>
+  r.summary
+    .replace('{rating}', ratingFmt.format(rating))
+    .replace('{count}', String(count))
+    .replace('{source}', sourceName[source]);
+---
+
+{
+  (reviews.length > 0 || reviewSummaries.length > 0) && (
+    <section id="reviews" class="section bg-bg-alt pt-0 lg:pt-0">
+      <div class="wrap">
+        <h2 class="h2">{r.title}</h2>
+        <p class="text-muted mt-4 max-w-2xl text-lg">{r.intro}</p>
+        {isSample && (
+          <p class="mt-3 inline-block rounded bg-red-600 px-2 py-1 text-sm font-semibold text-white">
+            DEV PREVIEW — sample cards, hidden in production until real reviews are added.
+          </p>
+        )}
+        {reviewSummaries.length > 0 && (
+          <ul class="mt-6 flex flex-wrap gap-3">
+            {reviewSummaries.map((sm) => (
+              <li>
+                <a
+                  href={sm.url}
+                  target="_blank"
+                  rel="noopener"
+                  class="border-line bg-bg hover:border-orange inline-flex items-center gap-3 rounded-full border px-4 py-2.5 font-semibold transition-colors"
+                >
+                  <span class="text-orange flex gap-0.5" aria-hidden="true">
+                    {Array.from({ length: 5 }, () => (
+                      <Icon name="tabler:star-filled" class="h-4.5 w-4.5" />
+                    ))}
+                  </span>
+                  {summaryText(sm.rating, sm.count, sm.source)}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+        {reviews.length > 0 && (
+          <ul class="reviews-row mt-7 lg:mt-9">
+            {reviews.map((rev) => (
+              <li class="review-card">
+                <div
+                  class="text-orange flex gap-0.5"
+                  role="img"
+                  aria-label={r.stars.replace('{n}', String(rev.rating))}
+                >
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <Icon
+                      name="tabler:star-filled"
+                      class:list={['h-5 w-5', i >= rev.rating && 'opacity-25']}
+                      aria-hidden="true"
+                    />
+                  ))}
+                </div>
+                <blockquote class="mt-4 flex-1">
+                  <p>{rev.text}</p>
+                </blockquote>
+                <footer class="border-line mt-5 flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-t pt-4">
+                  <div class="min-w-[10rem] flex-1">
+                    <p class="font-semibold">{rev.name}</p>
+                    {rev.detail && <p class="text-muted text-sm">{rev.detail}</p>}
+                  </div>
+                  <p class="text-muted shrink-0 text-right text-sm">
+                    {rev.url ? (
+                      <a
+                        href={rev.url}
+                        target="_blank"
+                        rel="noopener"
+                        class="hover:text-orange-text inline-flex items-center gap-1.5 underline underline-offset-4"
+                      >
+                        {sourceIcon[rev.source] && (
+                          <Icon name={sourceIcon[rev.source]!} class="h-4 w-4" aria-hidden="true" />
+                        )}
+                        {sourceName[rev.source]}
+                      </a>
+                    ) : (
+                      <span class="inline-flex items-center gap-1.5">
+                        {sourceIcon[rev.source] && (
+                          <Icon name={sourceIcon[rev.source]!} class="h-4 w-4" aria-hidden="true" />
+                        )}
+                        {sourceName[rev.source]}
+                      </span>
+                    )}
+                    {rev.date && <span class="block">{formatDate(rev.date)}</span>}
+                  </p>
+                </footer>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  /* Phones: one swipeable row with the next card peeking in. md+: a grid. */
+  .reviews-row {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 85%;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    margin-inline: -1.25rem;
+    padding: 0.25rem 1.25rem 0.75rem;
+    scroll-padding-inline: 1.25rem;
+    scrollbar-width: none;
+  }
+  .reviews-row::-webkit-scrollbar {
+    display: none;
+  }
+  @media (width >= 48rem) {
+    .reviews-row {
+      grid-auto-flow: row;
+      grid-auto-columns: auto;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      overflow: visible;
+      margin-inline: 0;
+      padding: 0;
+      gap: 1.25rem;
+    }
+  }
+  @media (width >= 64rem) {
+    .reviews-row {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .review-card {
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: start;
+    padding: 1.5rem;
+    border-radius: 0.9rem;
+    border: 1px solid var(--color-line);
+    border-top: 4px solid var(--c-orange);
+    background: var(--color-bg);
+  }
+</style>

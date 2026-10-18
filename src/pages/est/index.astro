@@ -1,0 +1,573 @@
+---
+// Admin: booking requests from the site form, with status / price / note and
+// ready-made replies. Password: ADMIN_PASSWORD env var. Data: NETLIFY_API_TOKEN.
+import '~/assets/styles/tailwind.css';
+
+import { business } from '~/config/business';
+import en from '~/i18n/en.json';
+import es from '~/i18n/es.json';
+import ru from '~/i18n/ru.json';
+import {
+  STATUSES,
+  SetupError,
+  authConfigured,
+  checkPassword,
+  emptyMeta,
+  endSession,
+  fetchSubmissions,
+  isAuthed,
+  loadMeta,
+  loginBlocked,
+  recordLoginFailure,
+  sampleSubmissions,
+  startSession,
+  type Meta,
+  type Submission,
+} from '~/lib/est';
+
+export const prerender = false;
+
+// Outside 'netlify' mode this route is prerendered to a stub and deleted (astro.config.ts).
+const live = !Astro.isPrerendered;
+const { cookies, request, url, locals } = Astro;
+const netlifyContext = (locals as { netlify?: { context?: { site?: { id?: string } } } }).netlify?.context;
+const onNetlify = !!netlifyContext;
+const secure = url.protocol === 'https:';
+
+Astro.response.headers.set('Cache-Control', 'no-store');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+
+let loginError = '';
+if (live && request.method === 'POST') {
+  const form = await request.formData();
+  if (form.get('action') === 'logout') {
+    endSession(cookies);
+    return Astro.redirect('/est', 303);
+  }
+  const ip = Astro.clientAddress || 'unknown';
+  if (loginBlocked(ip)) {
+    loginError = 'Too many attempts. Try again in 15 minutes.';
+  } else if (checkPassword(String(form.get('password') ?? ''))) {
+    startSession(cookies, secure);
+    return Astro.redirect('/est', 303);
+  } else {
+    recordLoginFailure(ip);
+    await new Promise((r) => setTimeout(r, 600));
+    loginError = 'Wrong password.';
+  }
+}
+
+const authed = live && isAuthed(cookies);
+
+let submissions: Submission[] = [];
+let meta: Record<string, Meta> = {};
+let loadError = '';
+let sample = false;
+if (authed) {
+  const siteId = netlifyContext?.site?.id || process.env.NETLIFY_SITE_ID || process.env.SITE_ID;
+  try {
+    submissions = await fetchSubmissions(siteId);
+  } catch (e) {
+    if (e instanceof SetupError && import.meta.env.DEV) {
+      submissions = sampleSubmissions;
+      sample = true;
+    } else {
+      loadError = e instanceof Error ? e.message : String(e);
+    }
+  }
+  try {
+    meta = await loadMeta(onNetlify);
+  } catch (e) {
+    loadError ||= `Could not load statuses: ${e instanceof Error ? e.message : e}`;
+  }
+}
+
+const statusLabel: Record<(typeof STATUSES)[number], string> = {
+  new: 'New',
+  quoted: 'Quoted',
+  scheduled: 'Scheduled',
+  done: 'Done',
+  cancelled: 'Cancelled',
+};
+const counts = Object.fromEntries(STATUSES.map((s) => [s, 0])) as Record<(typeof STATUSES)[number], number>;
+for (const s of submissions) counts[(meta[s.id] ?? emptyMeta).status]++;
+
+const dicts = { en, es, ru } as const;
+const serviceLabel = (key: string) => (en.form.serviceOptions as Record<string, string>)[key] ?? key;
+const timeLabel = (key: string) => (en.form.timeOptions as Record<string, string>)[key] ?? key;
+const received = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'America/Los_Angeles',
+  day: 'numeric',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+const prefDate = (ymd: string) =>
+  ymd
+    ? new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'long' }).format(
+        new Date(`${ymd}T00:00:00Z`)
+      )
+    : '';
+
+// Labels the reply templates need, in the client's language.
+const replyLabels = Object.fromEntries(
+  Object.entries(dicts).map(([l, d]) => [l, { services: d.form.serviceOptions, times: d.form.timeOptions }])
+);
+const biz = { name: business.name, phone: business.phone.display, email: business.email, site: 'handyhab.com' };
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Requests — {business.name}</title>
+    <script is:inline>
+      document.documentElement.classList.toggle('dark', matchMedia('(prefers-color-scheme: dark)').matches);
+    </script>
+  </head>
+  <body class="bg-bg text-ink min-h-screen font-sans">
+    {
+      !authed ? (
+        <main class="mx-auto grid min-h-screen max-w-sm place-content-center px-4">
+          <h1 class="font-display text-4xl uppercase">Requests</h1>
+          {!authConfigured() ? (
+            <p class="text-muted mt-4">
+              Login is not set up: add the <code>ADMIN_PASSWORD</code> variable (at least 8 characters) in Netlify
+              environment variables.
+            </p>
+          ) : (
+            <form method="post" class="mt-6 grid gap-3">
+              <input type="hidden" name="action" value="login" />
+              <label class="font-semibold" for="pw">
+                Password
+              </label>
+              <input
+                id="pw"
+                name="password"
+                type="password"
+                required
+                autocomplete="current-password"
+                class="border-line bg-surface rounded border-2 px-3 py-2.5"
+              />
+              {loginError && <p class="font-semibold text-red-600">{loginError}</p>}
+              <button class="btn btn-orange">Log in</button>
+            </form>
+          )}
+        </main>
+      ) : (
+        <main class="mx-auto max-w-5xl px-4 py-6">
+          <header class="flex flex-wrap items-center justify-between gap-3">
+            <h1 class="font-display text-4xl uppercase">
+              Requests <span class="text-muted text-2xl">{submissions.length}</span>
+            </h1>
+            <div class="flex items-center gap-2">
+              <a href="/est" class="border-line rounded border px-3 py-2 text-sm font-semibold">
+                Refresh
+              </a>
+              <form method="post">
+                <input type="hidden" name="action" value="logout" />
+                <button class="border-line rounded border px-3 py-2 text-sm font-semibold">Log out</button>
+              </form>
+            </div>
+          </header>
+
+          {sample && (
+            <p class="mt-4 rounded bg-red-600 px-3 py-2 text-sm font-semibold text-white">
+              LOCAL PREVIEW — sample requests (no NETLIFY_API_TOKEN). Statuses are saved to .data/est-meta.json.
+            </p>
+          )}
+          {loadError && (
+            <p class="mt-4 rounded border-2 border-red-600 px-3 py-2 text-sm">
+              <b>Loading error:</b> {loadError}
+            </p>
+          )}
+
+          <nav class="mt-5 flex flex-wrap gap-2" aria-label="Filter by status" data-filters>
+            <button class="chip" data-filter="all" aria-pressed="true">
+              All <span>{submissions.length}</span>
+            </button>
+            {STATUSES.map((s) => (
+              <button class="chip" data-filter={s} data-status={s} aria-pressed="false">
+                {statusLabel[s]} <span data-count={s}>{counts[s]}</span>
+              </button>
+            ))}
+          </nav>
+
+          {submissions.length === 0 && !loadError && <p class="text-muted mt-8">No requests yet.</p>}
+
+          <ul class="mt-5 grid gap-4" data-list>
+            {submissions.map((s) => {
+              const m = meta[s.id] ?? emptyMeta;
+              const reply = {
+                name: s.name,
+                email: s.email,
+                phone: s.phone,
+                zip: s.zip,
+                service: s.service,
+                date: s.date,
+                time: s.time,
+                lang: s.lang in dicts ? s.lang : 'en',
+              };
+              return (
+                <li class="card" data-card data-id={s.id} data-status={m.status} data-reply={JSON.stringify(reply)}>
+                  <div class="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                      <p class="text-muted text-sm">
+                        {s.number ? `#${s.number} · ` : ''}
+                        {received.format(new Date(s.createdAt))} · {s.lang.toUpperCase()}
+                      </p>
+                      <h2 class="mt-0.5 text-xl font-bold">{s.name || '—'}</h2>
+                    </div>
+                    <span class="pill" data-pill data-status={m.status}>
+                      {statusLabel[m.status]}
+                    </span>
+                  </div>
+
+                  <dl class="info mt-3">
+                    <dt>Phone</dt>
+                    <dd>
+                      <a href={`tel:${s.phone.replace(/[^\d+]/g, '')}`} class="link">
+                        {s.phone}
+                      </a>
+                    </dd>
+                    {s.email && (
+                      <>
+                        <dt>Email</dt>
+                        <dd class="break-all">{s.email}</dd>
+                      </>
+                    )}
+                    <dt>ZIP</dt>
+                    <dd>{s.zip}</dd>
+                    <dt>Service</dt>
+                    <dd>{serviceLabel(s.service)}</dd>
+                    {(s.date || s.time) && (
+                      <>
+                        <dt>When</dt>
+                        <dd>{[prefDate(s.date), s.time && timeLabel(s.time)].filter(Boolean).join(', ')}</dd>
+                      </>
+                    )}
+                  </dl>
+                  {s.description && <p class="mt-3 whitespace-pre-line">{s.description}</p>}
+                  {s.photos.length > 0 && (
+                    <div class="mt-3 flex flex-wrap gap-2">
+                      {s.photos.map((p) => (
+                        <a href={p.url} target="_blank" rel="noopener noreferrer" title={p.name}>
+                          <img
+                            src={p.url}
+                            alt={p.name}
+                            loading="lazy"
+                            class="border-line h-24 w-24 rounded border object-cover"
+                          />
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
+                  <div class="border-line mt-4 grid gap-3 border-t pt-4 sm:grid-cols-[11rem_9rem_1fr]">
+                    <label class="field">
+                      <span>Status</span>
+                      <select data-field="status">
+                        {STATUSES.map((st) => (
+                          <option value={st} selected={st === m.status}>
+                            {statusLabel[st]}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label class="field">
+                      <span>Price, $</span>
+                      <input data-field="price" inputmode="decimal" value={m.price} placeholder="0" />
+                    </label>
+                    <label class="field">
+                      <span>Note (only you see it)</span>
+                      <input data-field="note" value={m.note} placeholder="address, details…" />
+                    </label>
+                  </div>
+
+                  <div class="mt-3 flex flex-wrap items-center gap-2">
+                    {s.email && (
+                      <>
+                        <a
+                          class="btn btn-orange btn-sm"
+                          href="#"
+                          data-reply-link="gmail"
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          Reply in Gmail
+                        </a>
+                        <a class="btn-ghost" href="#" data-reply-link="mailto">
+                          Mail app
+                        </a>
+                      </>
+                    )}
+                    <a class="btn-ghost" href="#" data-reply-link="whatsapp" target="_blank" rel="noopener">
+                      WhatsApp
+                    </a>
+                    <a class="btn-ghost" href="#" data-reply-link="sms">
+                      SMS
+                    </a>
+                    <span class="text-muted ml-auto text-sm" data-saved aria-live="polite" />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </main>
+      )
+    }
+
+    <script is:inline define:vars={{ replyLabels, biz, statusLabel }}>
+      const list = document.querySelector('[data-list]');
+      if (list) {
+        // --- Filters ---------------------------------------------------------
+        const chips = [...document.querySelectorAll('[data-filter]')];
+        let filter = 'all';
+        const applyFilter = () => {
+          chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filter === filter)));
+          list.querySelectorAll('[data-card]').forEach((card) => {
+            card.hidden = filter !== 'all' && card.dataset.status !== filter;
+          });
+        };
+        chips.forEach((c) =>
+          c.addEventListener('click', () => {
+            filter = c.dataset.filter;
+            applyFilter();
+          })
+        );
+        const recount = () => {
+          document.querySelectorAll('[data-count]').forEach((el) => {
+            el.textContent = list.querySelectorAll(`[data-card][data-status="${el.dataset.count}"]`).length;
+          });
+        };
+
+        // --- Save status / price / note --------------------------------------
+        const save = async (card) => {
+          const val = (f) => card.querySelector(`[data-field="${f}"]`).value;
+          const body = { id: card.dataset.id, status: val('status'), price: val('price'), note: val('note') };
+          const out = card.querySelector('[data-saved]');
+          out.textContent = 'Saving…';
+          try {
+            const res = await fetch('/est/save', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(body),
+            });
+            if (res.status === 401) {
+              location.reload();
+              return;
+            }
+            if (!res.ok) throw new Error(String(res.status));
+            card.dataset.status = body.status;
+            const pill = card.querySelector('[data-pill]');
+            pill.dataset.status = body.status;
+            pill.textContent = statusLabel[body.status];
+            recount();
+            out.textContent = 'Saved ✓';
+          } catch (e) {
+            out.textContent = `Not saved (${e.message}) — try again`;
+          }
+        };
+        list.addEventListener('change', (e) => {
+          const card = e.target.closest('[data-card]');
+          if (card && e.target.matches('[data-field]')) save(card);
+        });
+
+        // --- Reply templates --------------------------------------------------
+        const T = {
+          en: {
+            subject: `Your junk removal estimate — ${biz.name}`,
+            hi: (n) => `Hi ${n},`,
+            thanks: (svc, zip) =>
+              `Thank you for your request! Here is your estimate for ${svc.toLowerCase()}${zip ? ` (ZIP ${zip})` : ''}:`,
+            price: 'Price',
+            when: 'Date and arrival window',
+            incl: 'Included: loading, hauling, disposal and sweep-up.',
+            final: `The final price is confirmed on site before we start. To book, just reply to this message or call/text ${biz.phone}.`,
+            bye: 'Best regards,',
+            date: 'en-US',
+          },
+          es: {
+            subject: `Su cotización de retiro de basura — ${biz.name}`,
+            hi: (n) => `Hola, ${n}:`,
+            thanks: (svc, zip) =>
+              `¡Gracias por su solicitud! Esta es su cotización para ${svc.toLowerCase()}${zip ? ` (código postal ${zip})` : ''}:`,
+            price: 'Precio',
+            when: 'Fecha y horario de llegada',
+            incl: 'Incluye: carga, transporte, disposición y barrido final.',
+            final: `El precio final se confirma en el lugar antes de empezar. Para reservar, responda a este mensaje o llámenos o escríbanos al ${biz.phone}.`,
+            bye: 'Saludos cordiales,',
+            date: 'es-MX',
+          },
+          ru: {
+            subject: `Оценка вывоза — ${biz.name}`,
+            hi: (n) => `Здравствуйте, ${n}!`,
+            thanks: (svc, zip) =>
+              `Спасибо за заявку! Вот оценка по вашему заказу: ${svc.toLowerCase()}${zip ? ` (ZIP ${zip})` : ''}.`,
+            price: 'Цена',
+            when: 'Дата и время прибытия',
+            incl: 'Включено: погрузка, вывоз, утилизация и уборка после нас.',
+            final: `Окончательная цена подтверждается на месте до начала работ. Чтобы забронировать, просто ответьте на это сообщение или позвоните/напишите: ${biz.phone}.`,
+            bye: 'С уважением,',
+            date: 'ru',
+          },
+        };
+        const BLANK = '____';
+        const firstName = (n) => (n || '').trim().split(/\s+/)[0] || '';
+        const buildReply = (card) => {
+          const r = JSON.parse(card.dataset.reply);
+          const t = T[r.lang] || T.en;
+          const labels = replyLabels[r.lang] || replyLabels.en;
+          const price = card.querySelector('[data-field="price"]').value.trim();
+          const svc = labels.services[r.service] || r.service || '';
+          const date = r.date
+            ? new Intl.DateTimeFormat(t.date, {
+                timeZone: 'UTC',
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+              }).format(new Date(`${r.date}T00:00:00Z`))
+            : BLANK;
+          const time = r.time ? labels.times[r.time] : BLANK;
+          const body = [
+            t.hi(firstName(r.name)),
+            '',
+            t.thanks(svc, r.zip),
+            '',
+            `${t.price}: $${price || BLANK}`,
+            `${t.when}: ${date}, ${time}`,
+            t.incl,
+            '',
+            t.final,
+            '',
+            t.bye,
+            biz.name,
+            `${biz.phone} · ${biz.site}`,
+          ].join('\n');
+          return { r, subject: t.subject, body };
+        };
+        const digits = (p) => {
+          const d = (p || '').replace(/\D/g, '');
+          return d.length === 10 ? `1${d}` : d;
+        };
+        const enc = encodeURIComponent;
+        // Links are built on click so they always use the current price.
+        list.addEventListener('click', (e) => {
+          const a = e.target.closest('[data-reply-link]');
+          if (!a) return;
+          const card = a.closest('[data-card]');
+          const { r, subject, body } = buildReply(card);
+          const kind = a.dataset.replyLink;
+          if (kind === 'gmail')
+            a.href = `https://mail.google.com/mail/?view=cm&fs=1&authuser=${enc(biz.email)}&to=${enc(r.email)}&su=${enc(subject)}&body=${enc(body)}`;
+          if (kind === 'mailto') a.href = `mailto:${r.email}?subject=${enc(subject)}&body=${enc(body)}`;
+          if (kind === 'whatsapp') a.href = `https://wa.me/${digits(r.phone)}?text=${enc(body)}`;
+          if (kind === 'sms') a.href = `sms:+${digits(r.phone)}?&body=${enc(body)}`;
+          // Replying with a price usually means the quote is out.
+          const status = card.querySelector('[data-field="status"]');
+          if (status.value === 'new' && card.querySelector('[data-field="price"]').value.trim()) {
+            status.value = 'quoted';
+            save(card);
+          }
+        });
+      }
+    </script>
+
+    <style is:global>
+      .chip {
+        border: 1px solid var(--c-line);
+        border-radius: 999px;
+        padding: 0.35rem 0.85rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+      .chip span {
+        opacity: 0.6;
+        margin-left: 0.2rem;
+      }
+      .chip[aria-pressed='true'] {
+        background: var(--c-orange);
+        border-color: var(--c-orange);
+        color: var(--c-on-orange);
+      }
+      .card {
+        background: var(--c-surface);
+        border: 1px solid var(--c-line);
+        border-radius: 0.75rem;
+        padding: 1rem 1.1rem;
+      }
+      .card[hidden] {
+        display: none;
+      }
+      .info {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 0.2rem 1rem;
+      }
+      .info dt {
+        color: var(--c-muted);
+      }
+      .link {
+        color: var(--c-orange-text);
+        font-weight: 600;
+      }
+      .field {
+        display: grid;
+        gap: 0.25rem;
+        font-size: 0.85rem;
+        color: var(--c-muted);
+      }
+      .field :is(select, input) {
+        width: 100%;
+        min-width: 0;
+        color: var(--c-ink);
+        background: var(--c-bg);
+        border: 2px solid var(--c-line);
+        border-radius: 0.4rem;
+        padding: 0.45rem 0.6rem;
+        font-size: 1rem;
+      }
+      .btn-sm {
+        min-height: 2.6rem;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+      }
+      .btn-ghost {
+        border: 1px solid var(--c-line);
+        border-radius: 0.4rem;
+        padding: 0.55rem 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .pill {
+        border-radius: 999px;
+        padding: 0.2rem 0.7rem;
+        font-size: 0.8rem;
+        font-weight: 700;
+        background: var(--c-bg-alt);
+      }
+      .pill[data-status='new'] {
+        background: var(--c-orange);
+        color: var(--c-on-orange);
+      }
+      .pill[data-status='quoted'] {
+        background: #2563eb;
+        color: #fff;
+      }
+      .pill[data-status='scheduled'] {
+        background: #7c3aed;
+        color: #fff;
+      }
+      .pill[data-status='done'] {
+        background: #15803d;
+        color: #fff;
+      }
+      .pill[data-status='cancelled'] {
+        color: var(--c-muted);
+        text-decoration: line-through;
+      }
+    </style>
+  </body>
+</html>

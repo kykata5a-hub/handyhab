@@ -10,7 +10,7 @@ export const business = {
     display: '(213) 264-8266',
     e164: '+12132648266',
   },
-  // Same as phone for now — confirm with client.
+  // Same number as the phone line (confirmed by client).
   whatsapp: '12132648266',
   email: 'HandyHab.hauling@gmail.com',
 
@@ -23,9 +23,6 @@ export const business = {
 
   // 24h format for schema.org; display text lives in the i18n files.
   hours: { days: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'], opens: '07:00', closes: '20:00' },
-
-  // Shown after the translated "Licensed & insured" label.
-  license: 'CA #000000',
 
   // Placeholder list — client to confirm.
   serviceArea: [

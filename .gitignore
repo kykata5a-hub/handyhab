@@ -26,3 +26,8 @@ pnpm-lock.yaml
 pnpm-workspace.yaml
 
 .astro
+# local admin data (/est in npm run dev)
+.data/
+
+# Netlify adapter build output
+.netlify/

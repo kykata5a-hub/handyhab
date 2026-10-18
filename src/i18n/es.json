@@ -83,6 +83,13 @@
     "after": "Después",
     "slider": "Comparación de antes y después. Use las flechas izquierda y derecha para mover la barra."
   },
+  "reviews": {
+    "title": "Lo que dicen nuestros clientes",
+    "intro": "Reseñas reales de personas a las que hemos ayudado en todo Los Ángeles.",
+    "stars": "{n} de 5 estrellas",
+    "direct": "Enviada directamente",
+    "summary": "{rating} · {count} reseñas en {source}"
+  },
   "steps": {
     "title": "Cómo funciona",
     "items": [
@@ -166,7 +173,7 @@
     "photosHint": "Hasta 3 imágenes de 5 MB cada una. Con fotos le damos un precio exacto.",
     "photosChoose": "Agregar fotos",
     "honeypot": "Deje este campo vacío",
-    "privacy": "Al enviar este formulario acepta nuestro",
+    "privacy": "Al enviar este formulario acepta nuestros",
     "privacyLink": "aviso de privacidad",
     "submit": "Enviar solicitud",
     "sending": "Enviando…",
@@ -185,13 +192,14 @@
       "fileSize": "Cada foto debe pesar menos de 5 MB.",
       "fileType": "Solo imágenes JPG, PNG, WebP o HEIC.",
       "summary": "Revise los campos marcados."
-    }
+    },
+    "termsLink": "términos del servicio",
+    "and": "y nuestro"
   },
   "footer": {
     "contact": "Contacto",
     "hours": "Horario",
     "hoursText": "Todos los días, de 7 a. m. a 8 p. m.",
-    "licensed": "Con licencia y seguro",
     "privacy": "Aviso de privacidad",
     "rights": "Todos los derechos reservados.",
     "terms": "Términos del servicio"
@@ -202,33 +210,165 @@
   },
   "privacy": {
     "title": "Aviso de privacidad",
-    "updated": "Última actualización: octubre de 2026. Borrador pendiente de aprobación del cliente.",
+    "updated": "Última actualización: 18 de octubre de 2026",
     "sections": [
       {
-        "h": "Qué datos recabamos",
-        "p": "Cuando envía el formulario recibimos su nombre, teléfono, código postal y, si lo desea, su correo, fecha preferida, una descripción de las cosas y hasta tres fotos."
+        "h": "1. Quiénes somos",
+        "items": [
+          {
+            "p": "Este aviso explica cómo HandyHab («nosotros»), una empresa de retiro de basura en Los Ángeles, California, recaba, usa y protege la información personal cuando usted visita handyhab.com, nos envía una solicitud o nos contacta por teléfono, mensaje de texto o WhatsApp."
+          }
+        ]
       },
       {
-        "h": "Para qué los usamos",
-        "p": "Solo para darle una cotización, agendar el retiro y comunicarnos con usted. No vendemos sus datos ni los usamos para publicidad."
+        "h": "2. Qué información recabamos",
+        "items": [
+          {
+            "b": "Información que usted nos da.",
+            "p": "Cuando usa el formulario de reserva, nos llama o nos escribe, podemos recibir:",
+            "list": [
+              "su nombre y número de teléfono;",
+              "su código postal y, al reservar, la dirección del retiro;",
+              "su correo electrónico (opcional);",
+              "la fecha y el horario de llegada que prefiere;",
+              "una descripción de los artículos y hasta 3 fotos;",
+              "cualquier otra cosa que decida contarnos en mensajes o llamadas."
+            ]
+          },
+          {
+            "b": "Información recabada automáticamente.",
+            "p": "Nuestro proveedor de hosting procesa automáticamente los datos técnicos necesarios para mostrar el sitio y mantenerlo seguro, como su dirección IP, el tipo de navegador, las páginas solicitadas y la hora de la solicitud. No usamos herramientas de analítica, publicidad ni rastreo."
+          },
+          {
+            "b": "Pagos.",
+            "p": "Los pagos por Zelle, Venmo, Cash App, PayPal o Apple Pay los procesa la aplicación que usted elija. No recabamos ni guardamos números de tarjeta; guardamos un registro del monto, la fecha y el método de pago."
+          },
+          {
+            "p": "No pedimos información personal sensible, como números de Seguro Social, accesos a cuentas financieras ni rastreo de ubicación precisa."
+          }
+        ]
       },
       {
-        "h": "Cuánto tiempo los guardamos",
-        "p": "Las solicitudes se guardan hasta 12 meses para agenda y contabilidad, y luego se borran. Las fotos se borran al terminar el trabajo."
+        "h": "3. Para qué la usamos",
+        "items": [
+          {
+            "p": "Usamos su información solo para prestar nuestro servicio:",
+            "list": [
+              "para preparar su cotización y confirmar el precio;",
+              "para programar y realizar el trabajo, y contactarle al respecto por llamada, mensaje de texto o WhatsApp;",
+              "para recibir el pago y llevar registros contables y fiscales;",
+              "para responder preguntas y atender quejas o reclamos por daños;",
+              "para proteger el sitio contra spam y abusos, y para cumplir con la ley."
+            ]
+          },
+          {
+            "p": "No enviamos mensajes de marketing sin su consentimiento."
+          }
+        ]
       },
       {
-        "h": "Quién los ve",
-        "p": "Nuestro equipo y nuestro proveedor de correo, que nos entrega la solicitud. Nadie más."
+        "h": "4. Con quién la compartimos",
+        "items": [
+          {
+            "p": "No vendemos ni «compartimos» su información personal en el sentido que la ley de California da a esos términos, y no la usamos para publicidad dirigida. Solo la divulgamos a:",
+            "list": [
+              "proveedores que nos ayudan a operar el negocio: Netlify (hosting del sitio y envío del formulario) y Google (correo electrónico), bajo sus propios términos de seguridad y privacidad;",
+              "WhatsApp y aplicaciones de teléfono o de pago, cuando usted decide contactarnos o pagarnos por ellas; se aplican sus propias políticas de privacidad;",
+              "autoridades, cuando la ley lo exija o sea necesario para proteger a personas, bienes o nuestros derechos;",
+              "un comprador o sucesor, si el negocio se vende o se reorganiza."
+            ]
+          }
+        ]
       },
       {
-        "h": "Sus derechos",
-        "p": "Los residentes de California pueden pedirnos qué datos tenemos, una copia de ellos o que los borremos. Escríbanos o llámenos y lo atendemos en un plazo de 30 días."
+        "h": "5. Fotos",
+        "items": [
+          {
+            "p": "Las fotos que sube se usan solo para preparar su cotización y planear el trabajo. No publicamos fotos de su propiedad sin su permiso."
+          }
+        ]
       },
       {
-        "h": "Cookies",
-        "p": "Este sitio no usa cookies de rastreo. Su navegador solo guarda el idioma y el tema que eligió."
+        "h": "6. Cuánto tiempo la guardamos",
+        "items": [
+          {
+            "list": [
+              "Solicitudes que no se convierten en trabajo: hasta 12 meses; después se eliminan.",
+              "Trabajos realizados y pagos: el tiempo que exijan las normas fiscales y contables."
+            ]
+          }
+        ]
+      },
+      {
+        "h": "7. Seguridad",
+        "items": [
+          {
+            "p": "El sitio usa cifrado HTTPS y el acceso a la información de los clientes está limitado a nuestro equipo. Ningún método de transmisión o almacenamiento es completamente seguro, pero tomamos medidas razonables para proteger su información."
+          }
+        ]
+      },
+      {
+        "h": "8. Sus derechos de privacidad en California",
+        "items": [
+          {
+            "p": "Si vive en California, puede pedirnos que:",
+            "list": [
+              "le digamos qué información personal tenemos sobre usted, de dónde proviene, para qué la usamos y a quién se la divulgamos;",
+              "le demos una copia;",
+              "corrijamos la información inexacta;",
+              "la eliminemos, salvo los registros que la ley nos obliga a conservar (por ejemplo, para impuestos)."
+            ]
+          },
+          {
+            "p": "No vendemos ni compartimos información personal ni usamos información personal sensible, así que no hay nada de qué excluirse. No le trataremos de manera distinta por ejercer sus derechos."
+          },
+          {
+            "b": "Cómo hacer una solicitud.",
+            "p": "Escríbanos o llámenos con los datos de abajo. Para proteger su información, podemos pedirle que confirme datos que ya tenemos, como su número de teléfono. Puede usar un agente autorizado con su permiso por escrito. Respondemos en un plazo de 45 días."
+          },
+          {
+            "b": "Shine the Light.",
+            "p": "Los residentes de California pueden preguntar si divulgamos información personal a terceros para su marketing directo. No lo hacemos."
+          }
+        ]
+      },
+      {
+        "h": "9. Cookies y Do Not Track",
+        "items": [
+          {
+            "p": "El sitio no usa cookies de rastreo ni de publicidad. Su navegador guarda en su dispositivo solo el idioma y el tema (claro u oscuro) que eligió, y la insignia «Powered by Netlify» de nuestro proveedor de hosting puede recordar si está abierta. Nada de esto se nos envía ni se usa para identificarle. Como no rastreamos a los visitantes, las señales Do Not Track y Global Privacy Control no cambian nada: no hay rastreo en ningún caso."
+          }
+        ]
+      },
+      {
+        "h": "10. Menores de edad",
+        "items": [
+          {
+            "p": "Nuestros servicios son para adultos de 18 años o más. No recabamos a sabiendas información de menores de 13 años. Si cree que un menor nos envió información, contáctenos y la eliminaremos."
+          }
+        ]
+      },
+      {
+        "h": "11. Otros sitios y aplicaciones",
+        "items": [
+          {
+            "p": "Los enlaces a WhatsApp y a aplicaciones de teléfono y de pago llevan a servicios de otras empresas. Al usarlos se aplican sus políticas de privacidad."
+          }
+        ]
+      },
+      {
+        "h": "12. Cambios a este aviso",
+        "items": [
+          {
+            "p": "Podemos actualizar este aviso de vez en cuando. La fecha al inicio indica la versión más reciente."
+          }
+        ]
       }
     ],
+    "contact": "13. Contacto",
+    "phoneLabel": "Teléfono y WhatsApp",
+    "emailLabel": "Correo electrónico",
+    "hoursLabel": "Horario",
     "back": "Volver a la página de inicio"
   },
   "terms": {
