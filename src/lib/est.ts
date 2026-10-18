@@ -1,6 +1,6 @@
 // Server-only helpers for the /est admin page: login, booking requests from
 // Netlify Forms, and the status/price/note the admin keeps for each request.
-import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
+import { createHash, createHmac, scryptSync, timingSafeEqual } from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
@@ -44,7 +44,8 @@ const env = (key: string): string | undefined => (import.meta.env[key] as string
 // --- Auth ---------------------------------------------------------------------
 // One shared password (ADMIN_PASSWORD env var). The session cookie holds an
 // expiry time signed with a key derived from that password, so changing the
-// password logs everyone out.
+// password logs everyone out. The key comes from scrypt (slow on purpose): a
+// stolen cookie can't be used to test password guesses quickly offline.
 
 const COOKIE = 'est_session';
 const SESSION_DAYS = 30;
@@ -52,7 +53,21 @@ const SESSION_DAYS = 30;
 const adminPassword = () => env('ADMIN_PASSWORD') ?? '';
 export const authConfigured = () => adminPassword().length >= 8;
 
-const signingKey = () => createHash('sha256').update(`est-session:${adminPassword()}`).digest();
+// ~100 ms once per function instance; cached for the password it was made from.
+let keyCache: { password: string; key: Buffer } | null = null;
+const signingKey = () => {
+  const password = adminPassword();
+  if (keyCache?.password !== password) {
+    const key = scryptSync(password, 'handyhab.com/est session v2', 32, {
+      N: 2 ** 15,
+      r: 8,
+      p: 1,
+      maxmem: 64 * 1024 * 1024,
+    });
+    keyCache = { password, key };
+  }
+  return keyCache.key;
+};
 const sign = (value: string) => createHmac('sha256', signingKey()).update(value).digest('base64url');
 
 const safeEqual = (a: string, b: string) => {
@@ -88,16 +103,47 @@ export function endSession(cookies: AstroCookies) {
   cookies.delete(COOKIE, { path: '/est' });
 }
 
-// Slow down password guessing (per function instance; good enough for one admin).
-const failures = new Map<string, { count: number; until: number }>();
-export function loginBlocked(ip: string): boolean {
-  const f = failures.get(ip);
-  return !!f && f.count >= 5 && f.until > Date.now();
+// Failed logins are counted in storage (Netlify Blobs), so the limit survives
+// function restarts: 5 failures per IP lock that IP out for 15 minutes, and 30
+// failures from all IPs together lock everyone out for an hour.
+const IP_LIMIT = 5;
+const IP_WINDOW = 15 * 60 * 1000;
+const ALL_LIMIT = 30;
+const ALL_WINDOW = 60 * 60 * 1000;
+const FAILURES_KEY = 'login-failures';
+
+type Window = { count: number; until: number };
+type Failures = { all?: Window; ips: Record<string, Window> };
+
+const ipKey = (ip: string) => createHash('sha256').update(`est-ip:${ip}`).digest('base64url').slice(0, 22);
+const active = (w: Window | undefined) => (w && w.until > Date.now() ? w : undefined);
+
+async function loadFailures(onNetlify: boolean): Promise<Failures> {
+  const f = (await readJSON<Failures>(onNetlify, FAILURES_KEY)) ?? { ips: {} };
+  // Drop expired entries so the record stays small.
+  for (const [k, w] of Object.entries(f.ips ?? {})) if (!active(w)) delete f.ips[k];
+  return { all: active(f.all), ips: f.ips ?? {} };
 }
-export function recordLoginFailure(ip: string) {
-  const f = failures.get(ip);
-  const count = f && f.until > Date.now() ? f.count + 1 : 1;
-  failures.set(ip, { count, until: Date.now() + 15 * 60 * 1000 });
+
+export async function loginBlocked(onNetlify: boolean, ip: string): Promise<boolean> {
+  const f = await loadFailures(onNetlify);
+  return (f.ips[ipKey(ip)]?.count ?? 0) >= IP_LIMIT || (f.all?.count ?? 0) >= ALL_LIMIT;
+}
+
+export async function recordLoginFailure(onNetlify: boolean, ip: string): Promise<void> {
+  const f = await loadFailures(onNetlify);
+  const now = Date.now();
+  const k = ipKey(ip);
+  f.ips[k] = { count: (f.ips[k]?.count ?? 0) + 1, until: now + IP_WINDOW };
+  f.all = { count: (f.all?.count ?? 0) + 1, until: f.all?.until ?? now + ALL_WINDOW };
+  await writeJSON(onNetlify, FAILURES_KEY, f);
+}
+
+export async function clearLoginFailures(onNetlify: boolean, ip: string): Promise<void> {
+  const f = await loadFailures(onNetlify);
+  if (!f.ips[ipKey(ip)]) return;
+  delete f.ips[ipKey(ip)];
+  await writeJSON(onNetlify, FAILURES_KEY, f);
 }
 
 // --- Booking requests (Netlify Forms API) --------------------------------------
@@ -169,36 +215,46 @@ export async function fetchSubmissions(siteId: string | undefined): Promise<Subm
   return all.map(fromNetlify);
 }
 
-// --- Admin data: status / price / note per request ------------------------------
-// Netlify Blobs on Netlify; a local JSON file in `npm run dev`.
+// --- Storage: Netlify Blobs on Netlify; JSON files in .data/ in `npm run dev` ----
 
-type MetaMap = Record<string, Meta>;
 const BLOB_STORE = 'est';
-const BLOB_KEY = 'meta';
-const LOCAL_FILE = path.join(process.cwd(), '.data', 'est-meta.json');
+const localFile = (key: string) => path.join(process.cwd(), '.data', `est-${key}.json`);
 
-export async function loadMeta(onNetlify: boolean): Promise<MetaMap> {
+async function readJSON<T>(onNetlify: boolean, key: string): Promise<T | null> {
   if (onNetlify) {
     const { getStore } = await import('@netlify/blobs');
-    return ((await getStore(BLOB_STORE).get(BLOB_KEY, { type: 'json' })) as MetaMap | null) ?? {};
+    return (await getStore(BLOB_STORE).get(key, { type: 'json' })) as T | null;
   }
   try {
-    return JSON.parse(await fs.readFile(LOCAL_FILE, 'utf8')) as MetaMap;
+    return JSON.parse(await fs.readFile(localFile(key), 'utf8')) as T;
   } catch {
-    return {};
+    return null;
   }
+}
+
+async function writeJSON(onNetlify: boolean, key: string, value: unknown): Promise<void> {
+  if (onNetlify) {
+    const { getStore } = await import('@netlify/blobs');
+    await getStore(BLOB_STORE).setJSON(key, value);
+    return;
+  }
+  await fs.mkdir(path.dirname(localFile(key)), { recursive: true });
+  await fs.writeFile(localFile(key), JSON.stringify(value, null, 2));
+}
+
+// --- Admin data: status / price / note per request ------------------------------
+
+type MetaMap = Record<string, Meta>;
+const META_KEY = 'meta';
+
+export async function loadMeta(onNetlify: boolean): Promise<MetaMap> {
+  return (await readJSON<MetaMap>(onNetlify, META_KEY)) ?? {};
 }
 
 export async function saveMeta(onNetlify: boolean, id: string, meta: Meta): Promise<void> {
   const all = await loadMeta(onNetlify);
   all[id] = { ...meta, updatedAt: new Date().toISOString() };
-  if (onNetlify) {
-    const { getStore } = await import('@netlify/blobs');
-    await getStore(BLOB_STORE).setJSON(BLOB_KEY, all);
-    return;
-  }
-  await fs.mkdir(path.dirname(LOCAL_FILE), { recursive: true });
-  await fs.writeFile(LOCAL_FILE, JSON.stringify(all, null, 2));
+  await writeJSON(onNetlify, META_KEY, all);
 }
 
 export function parseMeta(input: unknown): Meta | null {

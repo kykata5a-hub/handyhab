@@ -12,6 +12,7 @@ import {
   SetupError,
   authConfigured,
   checkPassword,
+  clearLoginFailures,
   emptyMeta,
   endSession,
   fetchSubmissions,
@@ -45,13 +46,14 @@ if (live && request.method === 'POST') {
     return Astro.redirect('/est', 303);
   }
   const ip = Astro.clientAddress || 'unknown';
-  if (loginBlocked(ip)) {
+  if (await loginBlocked(onNetlify, ip)) {
     loginError = 'Too many attempts. Try again in 15 minutes.';
   } else if (checkPassword(String(form.get('password') ?? ''))) {
+    await clearLoginFailures(onNetlify, ip);
     startSession(cookies, secure);
     return Astro.redirect('/est', 303);
   } else {
-    recordLoginFailure(ip);
+    await recordLoginFailure(onNetlify, ip);
     await new Promise((r) => setTimeout(r, 600));
     loginError = 'Wrong password.';
   }

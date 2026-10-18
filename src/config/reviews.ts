@@ -18,55 +18,37 @@ export interface Review {
   url?: string;
 }
 
-// Thumbtack: most reviews come from the
-// Furniture Assembly listing. Paste each review's text exactly as written —
-// entries with an empty `text` are skipped.
+// Paste each review's text exactly as written; entries with an empty `text` are skipped.
 const thumbtackUrl = 'https://www.thumbtack.com/ca/north-hollywood/handyman/handyhab/service/506290535920476172';
 
+const googleUrl = 'https://share.google/LLUN4crwma2ACLet7';
+
+// Texts are verbatim, as provided by the client from Google and Thumbtack.
 const allReviews: Review[] = [
   {
+    name: 'Rudy Serna',
+    text: 'Steve from HandyHab Hauling provided excellent service! He responded quickly, arrived right on time, and efficiently hauled away a large treadmill and gas barbecue from our backyard. The entire process was smooth and hassle free . Very professional and reliable. I highly recommend Steve and HandyHab Hauling for anyone needing junk removal services.',
+    rating: 5,
+    source: 'google',
+    date: '2026-10',
+    detail: 'Backyard junk removal',
+    url: googleUrl,
+  },
+  {
+    name: 'Adam',
+    text: 'Hands down the best junk removal service in the area! Aleksandr and his team arrived right on time, gave a fair quote on the spot, and loaded up everything in under an hour. Very polite and professional. Will definitely use HandyHab Hauling again!',
+    rating: 5,
+    source: 'google',
+    date: '2026-10',
+    url: googleUrl,
+  },
+  {
     name: 'Alicia S.',
-    text: '',
+    text: 'Alex came less than 2 hours after giving me a quote and loaded everything into the truck in under 15 minutes! I can’t recommend him enough. Great value, professional and such a great help!',
     rating: 5,
     source: 'thumbtack',
     date: '2026-09',
     detail: 'Junk removal',
-    url: thumbtackUrl,
-  },
-  {
-    name: 'Rita I.',
-    text: '',
-    rating: 5,
-    source: 'thumbtack',
-    date: '2026-05',
-    detail: 'Furniture assembly',
-    url: thumbtackUrl,
-  },
-  {
-    name: 'Tamar T.',
-    text: '',
-    rating: 5,
-    source: 'thumbtack',
-    date: '2026-01',
-    detail: 'Furniture assembly',
-    url: thumbtackUrl,
-  },
-  {
-    name: 'Irma L.',
-    text: '',
-    rating: 5,
-    source: 'thumbtack',
-    date: '2026-01',
-    detail: 'Furniture assembly',
-    url: thumbtackUrl,
-  },
-  {
-    name: 'Mia J.',
-    text: '',
-    rating: 5,
-    source: 'thumbtack',
-    date: '2025-12',
-    detail: 'Furniture assembly',
     url: thumbtackUrl,
   },
 ];
@@ -82,7 +64,7 @@ export interface ReviewSummary {
 }
 export const reviewSummaries: ReviewSummary[] = [
   // Google Business profile "Handyhab Hauling", as of 2026-10-18: 5.0 (6).
-  { source: 'google', rating: 5.0, count: 6, url: 'https://share.google/LLUN4crwma2ACLet7' },
+  { source: 'google', rating: 5.0, count: 6, url: googleUrl },
   // As of 2026-10-18: "Exceptional 5.0 (124)", Top Pro, hired 194 times.
   { source: 'thumbtack', rating: 5.0, count: 124, url: thumbtackUrl },
 ];

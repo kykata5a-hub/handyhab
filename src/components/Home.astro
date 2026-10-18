@@ -286,15 +286,26 @@ const schema = [
 <style>
   /* Mobile: photo fills the hero; text on the left, selling points on the right.
      md+: text over the photo, like the brand mockup, selling points in the orange bar. */
+  /* The photo is only 1024px wide, so it is never stretched across the whole hero:
+     on phones it fills the lower part (top fades into the dark background),
+     on larger screens it is capped near its real width and its edges fade out. */
+  .hero {
+    display: flex;
+    flex-direction: column;
+  }
   .hero-img {
-    position: absolute;
-    inset: 0;
+    /* Phones: the whole photo as a strip under the text, fading in from the top. */
+    order: 2;
+    display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 70% 50%;
+    height: auto;
+    aspect-ratio: 1024 / 572;
+    margin-top: -1.5rem;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 22%);
   }
   .hero-shade {
+    display: none; /* phones: text sits on the plain dark background */
     position: absolute;
     inset: 0;
     background:
@@ -411,9 +422,30 @@ const schema = [
       align-items: center;
     }
   }
-  @media (width >= 48rem) {
+  @media (width >= 82rem) {
     .hero-img {
-      object-position: 50% 66%; /* keep the truck and trailer in the wide crop */
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 85%, transparent 100%) !important;
+      mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 85%, transparent 100%) !important;
+    }
+  }
+  @media (width >= 48rem) {
+    .hero {
+      display: block;
+    }
+    .hero-shade {
+      display: block;
+    }
+    .hero-img {
+      position: absolute;
+      margin: 0;
+      aspect-ratio: auto;
+      object-fit: cover;
+      inset: 0 max(0px, calc((100% - 76rem) / 2)) 0 auto;
+      width: min(100%, 70rem);
+      height: 100%;
+      object-position: 50% 66%; /* keep the truck and trailer in the crop */
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%);
+      mask-image: linear-gradient(90deg, transparent 0%, #000 22%);
     }
     .hero-shade {
       background: linear-gradient(90deg, rgb(14 14 15 / 0.82) 0%, rgb(14 14 15 / 0.55) 32%, rgb(14 14 15 / 0) 58%);
