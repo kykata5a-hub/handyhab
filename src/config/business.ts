@@ -12,7 +12,7 @@ export const business = {
   },
   // Same as phone for now — confirm with client.
   whatsapp: '12132648266',
-  email: 'hello@example.com',
+  email: 'HandyHab.hauling@gmail.com',
 
   address: {
     locality: 'Los Angeles',

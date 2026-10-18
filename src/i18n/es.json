@@ -4,7 +4,8 @@
     "title": "Retiro de basura en Los Ángeles — Servicio el mismo día y al día siguiente | Handy Hab",
     "description": "Retiro de muebles, electrodomésticos y limpieza de garajes y casas en Los Ángeles. Cotización gratis por adelantado; nosotros cargamos todo y barremos. Llámenos o escríbanos por WhatsApp.",
     "privacyTitle": "Aviso de privacidad",
-    "notFoundTitle": "Página no encontrada"
+    "notFoundTitle": "Página no encontrada",
+    "termsTitle": "Términos del servicio"
   },
   "a11y": {
     "skip": "Ir al contenido",
@@ -192,7 +193,8 @@
     "hoursText": "Todos los días, de 7 a. m. a 8 p. m.",
     "licensed": "Con licencia y seguro",
     "privacy": "Aviso de privacidad",
-    "rights": "Todos los derechos reservados."
+    "rights": "Todos los derechos reservados.",
+    "terms": "Términos del servicio"
   },
   "whatsapp": {
     "label": "Escríbanos por WhatsApp",
@@ -227,6 +229,153 @@
         "p": "Este sitio no usa cookies de rastreo. Su navegador solo guarda el idioma y el tema que eligió."
       }
     ],
+    "back": "Volver a la página de inicio"
+  },
+  "terms": {
+    "title": "Términos del servicio",
+    "updated": "Última actualización: 17 de octubre de 2026",
+    "sections": [
+      {
+        "h": "1. Aceptación de estos Términos",
+        "items": [
+          {
+            "p": "Al usar handyhab.com, solicitar una cotización o reservar un retiro, usted acepta estos Términos del servicio. Si no está de acuerdo, por favor no use el sitio web ni nuestros servicios."
+          },
+          {
+            "p": "El sitio web y los servicios son operados por HandyHab («HandyHab», «nosotros»), Los Ángeles, California."
+          },
+          {
+            "p": "Debe tener al menos 18 años y la autoridad para desechar los artículos que nos pide retirar."
+          }
+        ]
+      },
+      {
+        "h": "2. Nuestros servicios",
+        "items": [
+          {
+            "p": "HandyHab ofrece servicios de retiro de basura, acarreo y limpieza en Los Ángeles y ciudades cercanas, incluidos el retiro de muebles y electrodomésticos, la limpieza de garajes, áticos, casas completas y bodegas, residuos de jardín, escombros de construcción y acarreo comercial."
+          },
+          {
+            "b": "Artículos que no aceptamos.",
+            "p": "No retiramos materiales peligrosos, como pintura, solventes, químicos, aceite de motor, combustible, tanques de propano u otros gases, asbesto, residuos biológicos, residuos médicos, armas de fuego o municiones. Podemos rechazar cualquier artículo que razonablemente consideremos inseguro, ilegal o no permitido en nuestras instalaciones de disposición."
+          },
+          {
+            "b": "Disposición.",
+            "p": "Los artículos en buen estado pueden donarse y los materiales reciclables, reciclarse. El resto se lleva a instalaciones autorizadas de disposición o transferencia. Una vez cargados en nuestro camión, la disposición de los artículos pasa a ser nuestra responsabilidad y podemos manejarlos a nuestra discreción. No podemos devolver artículos una vez retirados."
+          }
+        ]
+      },
+      {
+        "h": "3. Cotizaciones, reservas y pago",
+        "items": [
+          {
+            "b": "Cotizaciones.",
+            "p": "Las cotizaciones son gratuitas. Una cotización basada en fotos o en una descripción es un precio aproximado. Nuestro equipo confirma el precio final en el lugar antes de empezar cualquier trabajo. Puede rechazar el precio en el lugar sin ningún cargo."
+          },
+          {
+            "b": "Cambios de precio.",
+            "p": "El precio confirmado cubre los artículos mostrados al equipo. Artículos adicionales, cargas más pesadas de lo descrito o un acceso difícil (por ejemplo, pisos extra de escaleras o recorridos largos) pueden cambiar el precio. Siempre le avisaremos y pediremos su aprobación primero."
+          },
+          {
+            "b": "Reservas.",
+            "p": "Usted elige un horario de llegada por la mañana, la tarde o la noche. Los horarios son aproximados; el tráfico o trabajos anteriores pueden causar retrasos, y le avisaremos si vamos tarde. El servicio el mismo día depende de la disponibilidad."
+          },
+          {
+            "b": "Pago.",
+            "p": "El pago se realiza al terminar el trabajo. Aceptamos Zelle, efectivo, Venmo, Cash App, PayPal y Apple Pay. Los precios incluyen mano de obra, carga, transporte y cuotas de disposición, salvo que se indique lo contrario."
+          },
+          {
+            "b": "Cancelaciones.",
+            "p": "Puede cancelar o reprogramar sin costo hasta 24 horas antes de su horario de llegada. Si cancela con menos de 2 horas de anticipación, o si nuestro equipo llega y no puede realizar el servicio por circunstancias bajo su control (por ejemplo, sin acceso, nadie presente o una descripción inexacta de los artículos), se cobrará una tarifa de traslado de $75 para cubrir los costos de viaje y despacho."
+          }
+        ]
+      },
+      {
+        "h": "4. Sus responsabilidades",
+        "items": [
+          {
+            "p": "Al reservar un trabajo, usted confirma que:",
+            "list": [
+              "es dueño de los artículos o tiene derecho a que se retiren;",
+              "los artículos no contienen materiales peligrosos y nos informó sobre cualquier cosa inusualmente pesada, frágil o difícil de alcanzar;",
+              "retiró los objetos personales, objetos de valor, documentos y datos que desea conservar (incluso de cajones, cajas y aparatos electrónicos);",
+              "nuestro equipo tiene acceso seguro y legal a la propiedad y a los artículos, incluidos los permisos del edificio, de la HOA o de acceso con portón y el estacionamiento necesario."
+            ]
+          },
+          {
+            "p": "Si usted no está presente, los artículos dejados afuera o en un área abierta se consideran aprobados para retiro. Por favor marque claramente todo lo que deba quedarse."
+          }
+        ]
+      },
+      {
+        "h": "5. Daños, responsabilidad e indemnización",
+        "items": [
+          {
+            "b": "Daños a la propiedad.",
+            "p": "HandyHab cuenta con seguro. Nuestro equipo trabaja con cuidado. Si dañamos su propiedad, avísenos dentro de las 48 horas, con fotos si es posible, y trabajaremos con usted para repararlo o cubrir los costos razonables, hasta los límites de nuestro seguro."
+          },
+          {
+            "b": "No somos responsables de:",
+            "p": "el desgaste normal al mover artículos (por ejemplo, rayones menores en pisos o paredes a lo largo de la ruta de retiro cuando el artículo no se podía mover de otra forma); daños causados por defectos previos o condiciones inseguras de las que no nos informó; artículos retirados por indicación suya o conforme a la Sección 4; ni pérdidas indirectas o consecuentes."
+          },
+          {
+            "b": "Límite de responsabilidad.",
+            "p": "En la medida que lo permita la ley, nuestra responsabilidad total por cualquier reclamo relacionado con un trabajo se limita al monto que usted pagó por ese trabajo, excepto los daños cubiertos por nuestro seguro o causados por nuestra negligencia grave o conducta dolosa."
+          },
+          {
+            "b": "Indemnización.",
+            "p": "Usted acepta cubrir nuestros costos razonables derivados de reclamos causados por declaraciones falsas suyas sobre la propiedad de los artículos, materiales peligrosos o el acceso a la propiedad."
+          },
+          {
+            "p": "Nada en estos Términos limita los derechos que usted tiene bajo la ley de protección al consumidor de California y que no se pueden renunciar."
+          }
+        ]
+      },
+      {
+        "h": "6. Uso del sitio web",
+        "items": [
+          {
+            "p": "Puede usar el sitio web para conocer nuestros servicios y solicitar cotizaciones. Usted acepta no enviar solicitudes falsas, no subir contenido ilegal y no interferir con el funcionamiento del sitio."
+          },
+          {
+            "b": "Fotos que nos envía.",
+            "p": "Al subir fotos de sus artículos, nos permite usarlas para preparar su cotización. No publicaremos fotos de su propiedad sin su permiso."
+          },
+          {
+            "b": "Nuestro contenido.",
+            "p": "Los textos, imágenes, logotipos y el diseño de handyhab.com pertenecen a HandyHab y no se pueden copiar sin permiso. Las fotos de antes y después del sitio muestran trabajos anteriores; los resultados pueden variar."
+          },
+          {
+            "b": "Privacidad.",
+            "p": "La forma en que manejamos su nombre, teléfono, correo electrónico, código postal y fotos se describe en nuestro Aviso de privacidad."
+          },
+          {
+            "b": "Llamadas y mensajes.",
+            "p": "Al darnos su número de teléfono, acepta que podamos contactarle por llamada, mensaje de texto o WhatsApp sobre su solicitud. No enviamos mensajes de marketing sin su consentimiento."
+          }
+        ]
+      },
+      {
+        "h": "7. Disputas y ley aplicable",
+        "items": [
+          {
+            "p": "Si tiene algún problema, contáctenos primero e intentaremos resolverlo en un plazo de 30 días. Estos Términos se rigen por las leyes del Estado de California. Cualquier disputa que no se resuelva de manera informal se atenderá en los tribunales estatales del Condado de Los Ángeles, California, o en el tribunal de reclamos menores cuando proceda."
+          }
+        ]
+      },
+      {
+        "h": "8. Cambios a estos Términos",
+        "items": [
+          {
+            "p": "Podemos actualizar estos Términos de vez en cuando. La fecha al inicio indica la versión más reciente. A cada trabajo se aplican los Términos vigentes en el momento de la reserva."
+          }
+        ]
+      }
+    ],
+    "contact": "9. Contacto",
+    "phoneLabel": "Teléfono y WhatsApp",
+    "emailLabel": "Correo electrónico",
+    "hoursLabel": "Horario",
     "back": "Volver a la página de inicio"
   },
   "notFound": {

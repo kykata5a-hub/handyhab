@@ -4,7 +4,8 @@
     "title": "Junk Removal in Los Angeles — Same-Day & Next-Day Pickup | Handy Hab",
     "description": "Furniture, appliance, garage and estate cleanouts across Los Angeles. Free upfront estimate, we do all the lifting and sweep up. Call or WhatsApp today.",
     "privacyTitle": "Privacy Policy",
-    "notFoundTitle": "Page not found"
+    "notFoundTitle": "Page not found",
+    "termsTitle": "Terms of Service"
   },
   "a11y": {
     "skip": "Skip to content",
@@ -192,7 +193,8 @@
     "hoursText": "Every day, 7 am – 8 pm",
     "licensed": "Licensed & insured",
     "privacy": "Privacy policy",
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "terms": "Terms of service"
   },
   "whatsapp": {
     "label": "Chat with us on WhatsApp",
@@ -227,6 +229,153 @@
         "p": "This site doesn't use tracking cookies. Your browser stores only your language and theme choice."
       }
     ],
+    "back": "Back to home page"
+  },
+  "terms": {
+    "title": "Terms of service",
+    "updated": "Last updated: October 17, 2026",
+    "sections": [
+      {
+        "h": "1. Agreement to these Terms",
+        "items": [
+          {
+            "p": "By using handyhab.com, requesting an estimate or booking a pickup, you agree to these Terms of Service. If you do not agree, please do not use the website or our services."
+          },
+          {
+            "p": "The website and services are operated by HandyHab (\"HandyHab\", \"we\", \"us\"), Los Angeles, California."
+          },
+          {
+            "p": "You must be at least 18 years old and have the authority to dispose of the items you ask us to remove."
+          }
+        ]
+      },
+      {
+        "h": "2. Our services",
+        "items": [
+          {
+            "p": "HandyHab provides junk removal, hauling and cleanout services in Los Angeles and nearby cities, including furniture and appliance removal, garage, attic, estate and storage unit cleanouts, yard waste, construction debris and commercial hauling."
+          },
+          {
+            "b": "Items we do not accept.",
+            "p": "We do not remove hazardous materials, including paint, solvents, chemicals, motor oil, fuel, propane or other gas tanks, asbestos, biohazards, medical waste, firearms or ammunition. We may refuse any item we reasonably believe is unsafe, illegal or not permitted at our disposal facilities."
+          },
+          {
+            "b": "Disposal.",
+            "p": "Usable items may be donated, and recyclable materials recycled. The rest goes to authorized disposal or transfer facilities. Once loaded on our truck, items become our responsibility to dispose of, and we may handle them at our discretion. We cannot return items after they are removed."
+          }
+        ]
+      },
+      {
+        "h": "3. Estimates, booking and payment",
+        "items": [
+          {
+            "b": "Estimates.",
+            "p": "Estimates are free. An estimate based on photos or a description is an approximate price. Our crew confirms the final price on site before any work starts. You may decline the on-site price without charge."
+          },
+          {
+            "b": "Price changes.",
+            "p": "The confirmed price covers the items shown to the crew. Extra items, heavier loads than described, or difficult access (for example, extra flights of stairs or long carries) may change the price. We will always tell you and get your approval first."
+          },
+          {
+            "b": "Booking.",
+            "p": "You choose a morning, afternoon or evening arrival window. Times are estimates; traffic or earlier jobs may cause delays, and we will contact you if we run late. Same-day service depends on availability."
+          },
+          {
+            "b": "Payment.",
+            "p": "Payment is due when the job is complete. We accept Zelle, Cash, Venmo, Cash App, PayPal, and Apple Pay. Prices include labor, loading, transport and disposal fees unless stated otherwise."
+          },
+          {
+            "b": "Cancellations.",
+            "p": "You can cancel or reschedule free of charge up to 24 hours before your arrival window. If you cancel less than 2 hours before your window, or if our crew arrives and cannot perform the service due to circumstances within your control (e.g., no access, nobody present, or inaccurate description of items), a trip fee of $75 will apply to cover travel and dispatch costs."
+          }
+        ]
+      },
+      {
+        "h": "4. Your responsibilities",
+        "items": [
+          {
+            "p": "By booking a job, you confirm that:",
+            "list": [
+              "you own the items or have the right to have them removed;",
+              "the items contain no hazardous materials, and you have told us about anything unusually heavy, fragile or hard to reach;",
+              "you have removed personal items, valuables, documents and data you want to keep (including from drawers, boxes and electronics);",
+              "our crew has safe, legal access to the property and the items, including any building, HOA or gate permission and parking needed."
+            ]
+          },
+          {
+            "p": "If you are not present, items left outside or in an open area are treated as approved for removal. Please mark clearly anything that must stay."
+          }
+        ]
+      },
+      {
+        "h": "5. Damage, liability and indemnity",
+        "items": [
+          {
+            "b": "Property damage.",
+            "p": "HandyHab is insured. Our crew works with care. If we damage your property, report it within 48 hours, with photos if possible, and we will work with you to repair it or pay reasonable costs, up to the limits of our insurance."
+          },
+          {
+            "b": "What we are not liable for:",
+            "p": "normal wear from moving items (for example, minor scuffs on floors or walls along the removal path when the item could not be moved otherwise); damage caused by pre-existing defects or unsafe conditions you did not tell us about; items removed at your direction or under Section 4; and indirect or consequential losses."
+          },
+          {
+            "b": "Limit of liability.",
+            "p": "To the extent the law allows, our total liability for any claim related to a job is limited to the amount you paid for that job, except for damage covered by our insurance or caused by our gross negligence or willful misconduct."
+          },
+          {
+            "b": "Indemnity.",
+            "p": "You agree to cover our reasonable costs from claims caused by your false statements about item ownership, hazardous materials or property access."
+          },
+          {
+            "p": "Nothing in these Terms limits rights you have under California consumer protection law that cannot be waived."
+          }
+        ]
+      },
+      {
+        "h": "6. Website use",
+        "items": [
+          {
+            "p": "You may use the website to learn about our services and request estimates. You agree not to send false requests, upload unlawful content, or interfere with the site."
+          },
+          {
+            "b": "Photos you send.",
+            "p": "By uploading photos of your items, you let us use them to prepare your estimate. We will not publish photos of your property without your permission."
+          },
+          {
+            "b": "Our content.",
+            "p": "Text, images, logos and design on handyhab.com belong to HandyHab and may not be copied without permission. Before-and-after photos on the site show past jobs; results vary."
+          },
+          {
+            "b": "Privacy.",
+            "p": "How we handle your name, phone, email, ZIP code and photos is described in our Privacy Policy."
+          },
+          {
+            "b": "Calls and messages.",
+            "p": "By giving us your phone number, you agree we may contact you by call, text or WhatsApp about your request. We do not send marketing messages without your consent."
+          }
+        ]
+      },
+      {
+        "h": "7. Disputes and governing law",
+        "items": [
+          {
+            "p": "If you have a problem, contact us first and we will try to resolve it within 30 days. These Terms are governed by the laws of the State of California. Any dispute not resolved informally will be handled in the state courts of Los Angeles County, California, or in small claims court where eligible."
+          }
+        ]
+      },
+      {
+        "h": "8. Changes to these Terms",
+        "items": [
+          {
+            "p": "We may update these Terms from time to time. The date at the top shows the latest version. The Terms in effect when you book apply to that job."
+          }
+        ]
+      }
+    ],
+    "contact": "9. Contact",
+    "phoneLabel": "Phone and WhatsApp",
+    "emailLabel": "Email",
+    "hoursLabel": "Hours",
     "back": "Back to home page"
   },
   "notFound": {
